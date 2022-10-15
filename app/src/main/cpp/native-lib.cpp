@@ -1,9 +1,10 @@
 #include <jni.h>
 #include <string>
-#include "log4c.h"
+#include "player/log4c.h"
 extern "C"{
 #include <libavutil/avutil.h>
 }
+
 
 extern "C" JNIEXPORT jstring JNICALL
 Java_com_leo_qplayer_MainActivity_stringFromJNI(

@@ -2,7 +2,7 @@
 #ifndef DERRY_PLAYER_LOG4C_H
 #define DERRY_PLAYER_LOG4C_H
 
-#include <android/log.h>
+#include "../../../../../../../../Library/Android/sdk/ndk/21.4.7075529/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/include/android/log.h"
 
 #define TAG "Leo"
 
