@@ -17,7 +17,11 @@ android {
         externalNativeBuild {
             cmake {
                 cppFlags ''
+                abiFilters "armeabi-v7a" // CMakeLists.txt 指定编译的是此平台 会报错没有v8a啥的
             }
+        }
+        ndk{
+            abiFilters("armeabi-v7a")  // apk/lib/libnative-lib.so 指定编译的是此平台
         }
     }
 
