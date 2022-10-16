@@ -9,11 +9,11 @@ set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -L${FFMPEG}/libs/${CMAKE_ANDROID_ARCH_A
 set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -L${RTMP}/libs/${CMAKE_ANDROID_ARCH_ABI}") # rtmp库指定
 # 批量导入 源文件
 file(GLOB src_files *.cpp)
-#project("qplayer") 我个人测试自己项目这里加包会报错
+#project("qplayer") #我个人测试自己项目这里加包会报错
 
 add_library( # Sets the name of the library.
         qplayer
-        SHARED
+        SHARED#动态库
         ${src_files}
         )
 target_link_libraries(
