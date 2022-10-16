@@ -19,29 +19,27 @@ template<typename T>//函数泛型
 class SafeQueue {
 private:
     typedef void (*ReleaseListener)(T *); // 函数指针定义 回调 用来释放T里面的内容的;
-    typedef void (*DumpListener)(T *); // 函数指针定义 回调 用来释放T里面的内容的;
+    typedef void (*DumpListener)(queue<T>&); // 函数指针定义 回调 用来释放T里面的内容的;
 private:
     ReleaseListener release_listener;
     DumpListener dump_listener;
     queue<T> queue;//先进先出
     pthread_mutex_t lock;//互斥锁 加锁
     pthread_cond_t signal; //pthread_cond_signal 发送消息唤醒线程 pthread_cond_wait等待
-    int is_play;//是否在播放
+    bool is_play;//是否在播放
 
-    //初始化锁和信号
+
+
+public:
     SafeQueue() {
-
         pthread_mutex_init(&lock, 0);//初始化互斥锁
         pthread_cond_init(&signal, 0);//初始化信号
     }
-
     //析构函数
     ~SafeQueue() {
         pthread_cond_destroy(&signal);//释放信号
         pthread_mutex_destroy(&lock);//释放锁
     }
-
-public:
 
     void insert(T t) {
         pthread_mutex_lock(&lock);
@@ -82,7 +80,7 @@ public:
      * 设置释放监听器
      */
     void setReleaseListener(ReleaseListener listener) {
-        this->release_listener = listener;
+        this->dump_listener = listener;
     }
 
 
@@ -91,15 +89,16 @@ public:
     * @param listener
     * 设置清空监听器
     */
-    void setPopListener(DumpListener listener) {
-        this->pop_listener = listener;
+public:
+    void setDumpListener(DumpListener listener) {
+        this->dump_listener = listener;
     }
 
     /**
      * 是否开始播放
      * @param isPlay  是否开始播放
      */
-    void setPlayState(int isPlay) {
+    void setPlayState(bool isPlay) {
         pthread_mutex_lock(&lock);
         this->is_play = isPlay;
         pthread_cond_signal(&signal);//唤醒其他进行工作
@@ -148,6 +147,9 @@ public:
         if (dump_listener) { dump_listener(&queue); }
         pthread_mutex_unlock(&lock);
     }
+
+//初始化锁和信号
+
 };
 
 
