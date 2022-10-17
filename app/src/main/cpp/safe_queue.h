@@ -19,7 +19,7 @@ template<typename T>//函数泛型
 class SafeQueue {
 private:
     typedef void (*ReleaseListener)(T *); // 函数指针定义 回调 用来释放T里面的内容的;
-    typedef void (*DumpListener)(queue<T>&); // 函数指针定义 回调 用来释放T里面的内容的;
+    typedef void (*DumpListener)(queue<T> &); // 函数指针定义 回调 用来释放T里面的内容的;
 private:
     ReleaseListener release_listener;
     DumpListener dump_listener;
@@ -35,19 +35,23 @@ public:
         pthread_mutex_init(&lock, 0);//初始化互斥锁
         pthread_cond_init(&signal, 0);//初始化信号
     }
+
     //析构函数
     ~SafeQueue() {
         pthread_cond_destroy(&signal);//释放信号
         pthread_mutex_destroy(&lock);//释放锁
     }
 
+public:
     void insert(T t) {
         pthread_mutex_lock(&lock);
         if (is_play) {//如果在工作作态
             queue.push(t);//加入队列
             pthread_cond_signal(&signal);//通知外部
         } else {
-            releaseListener(&t);//将资源释放到外面
+            if (release_listener) {
+                release_listener(&t);//将资源释放到外面
+            }
         }
         pthread_mutex_unlock(&lock);
 
@@ -58,8 +62,8 @@ public:
      * @param t 参数类型
      * @return  返回是否成功
      */
-    int take(T t) {
-        int result = 0; // 默认是false
+    bool take(T &t) {
+        int result = false; // 默认是false
         pthread_mutex_lock(&lock);
         while (is_play && queue.empty())//如果在播放且队列没数据了
         {
@@ -68,7 +72,7 @@ public:
         if (!queue.empty()) {
             t = queue.front();//取出第一个元素
             queue.pop();//删除第一个元素
-            result = 1;//取出数据成功
+            result = true;//取出数据成功
         }
         pthread_mutex_unlock(&lock);
         return result;

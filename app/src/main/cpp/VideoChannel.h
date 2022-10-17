@@ -9,7 +9,7 @@
 
 extern "C"
 {
-#include <libswresample/swresample.h>//图像转换
+#include <libswscale/swscale.h>//图像转换
 #include <libavutil/avutil.h>
 #include <libavutil/imgutils.h>
 }
@@ -35,7 +35,7 @@ public:
     void  start();//播放
     void  stop();//停止播放
     void  decode();//解码
-    void  play();//播放
+     void  play();//播放
     void setRenderCallback(RenderingCallBack renderCallback);//设置渲回调
 
 
