@@ -28,6 +28,6 @@ target_link_libraries(
         rtmp # rtmp
         android # android 为了引用 ANativeWindow
         OpenSLES # OpenSLES  播放声音使用
-        jnigraphics
+        jnigraphics #提供了基于 C/C++ 的接口，可以访问 Android 中的 Bitmap 的像素缓冲区（bitmap buffers）。
 
 )

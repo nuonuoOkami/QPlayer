@@ -17,14 +17,12 @@ class MainActivity : AppCompatActivity() {
 
         binding.sampleText.text=stringFromJNI()
 
+
     }
 
 
     external fun stringFromJNI(): String
+    external fun player(path:String):Void
 
-    companion object {
-        init {
-            System.loadLibrary("qplayer")
-        }
-    }
+
 }
