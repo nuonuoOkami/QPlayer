@@ -23,7 +23,7 @@ public:
     SafeQueue<AVFrame *> aVFrames;//从信息源里获取出来的原始压缩数据包
     SafeQueue<AVPacket *> aVPackets;//解析出来的原始包 还需要音频/视频的再次解析
 public:
-    BaseChannel(int typeIndex, AVCodecContext *avCodecContext, AVRational timeBase,)
+    BaseChannel(int typeIndex, AVCodecContext *avCodecContext, AVRational timeBase)
             : avCodecContext(avCodecContext),
               type_index(typeIndex), time_base(timeBase) {
     };

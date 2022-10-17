@@ -50,7 +50,11 @@ void *task_play(void *args) {
 
     auto *channel = static_cast<VideoChannel *>(args);
     channel->decode();
-    
+
+}
+
+VideoChannel::~VideoChannel() {
+
 }
 
 
