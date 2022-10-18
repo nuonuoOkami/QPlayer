@@ -26,7 +26,7 @@ private:
     pthread_t p_thread_start;
     //媒体上下文
     //https://blog.csdn.net/leixiaohua1020/article/details/14214705
-    AVFormatContext *avFormatContext = nullptr;
+    AVFormatContext *avFormatContext = 0;
     //视频播放流
     VideoChannel *videoChannel=0;
     //总时长

@@ -30,7 +30,8 @@ void QPlayer::prepare() {
  * 子线程执行加载任务
  */
 void QPlayer::prepare_() {
-    LOGE("prepare_")
+
+
     //初始化上下文 ，老少爷们全靠你了
     avFormatContext = avformat_alloc_context();
     //字典  可以理解为一个设置的map
@@ -39,23 +40,25 @@ void QPlayer::prepare_() {
     //给字典老哥上嘴脸 超时 5s 都是纳秒
     av_dict_set(&avDictionary, "timeout", "5000000", 0);
 
-    LOGE("prepare_2")
     //设置给上下文 路径 字典 所有资源都要从上下文获取 返回0 成功
     int result = avformat_open_input(&avFormatContext, source, nullptr, &avDictionary);
     //释放字典老哥
     av_dict_free(&avDictionary);
-    LOGE("prepare_2")
     if (result) {
         //异常 todo 暂时不处理
-
         //释放掉上下文
         avformat_close_input(&avFormatContext);
+
+        return;
+
     }
     //查看信息流 大于0 ok  其他就失败了
     result = avformat_find_stream_info(avFormatContext, nullptr);
+
     if (result < 0) { //异常 todo 暂时不处理
         //释放掉上下文
         avformat_close_input(&avFormatContext);
+        return;
     }
 
     // 当前资源长度 要进行实践基转换
@@ -63,6 +66,7 @@ void QPlayer::prepare_() {
 
     //http://blog.csdn.net/leixiaohua1020/article/details/14214859
     AVCodecContext *avCodecContext = nullptr;
+
     //遍历流 一般 是2个  音频 视频 字幕
     for (int index = 0; index < avFormatContext->nb_streams; ++index) {
         //获取到流信息   AVStream https://blog.csdn.net/leixiaohua1020/article/details/14215821
@@ -78,6 +82,8 @@ void QPlayer::prepare_() {
             //todo 异常处理
             //释放上下文
             avformat_close_input(&avFormatContext);
+
+            return;
         }
 
         //干活大佬 null 失败
@@ -90,19 +96,21 @@ void QPlayer::prepare_() {
             avcodec_free_context(&avCodecContext);
             //释放上下文
             avformat_close_input(&avFormatContext);
+            return;
         }
 
         //给干活大佬上参数 >= 0 on success
         result = avcodec_parameters_to_context(avCodecContext, parameters);
 
         //失败处理
-        if (!result) {
+        if (result < 0) {
             //todo 异常处理
 
             //释放avCodecContext
             avcodec_free_context(&avCodecContext);
             //释放上下文
             avformat_close_input(&avFormatContext);
+            return;
         }
 
 
@@ -114,6 +122,7 @@ void QPlayer::prepare_() {
             avcodec_free_context(&avCodecContext);
             //释放上下文
             avformat_close_input(&avFormatContext);
+            return;
         }
         //todo  音视频同步代码 
 
@@ -136,7 +145,7 @@ void QPlayer::prepare_() {
             //构造传参
             videoChannel = new VideoChannel(index, avCodecContext, time_base, fps);
             videoChannel->setRenderCallback(renderingCallBack);
-            LOGE("加载成功")
+
         }
 
 

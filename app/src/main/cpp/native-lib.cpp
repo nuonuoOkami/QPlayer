@@ -56,11 +56,12 @@ Java_com_leo_qplayer_QPlayer_prepareNative(JNIEnv *env, jobject job, jstring dat
 
     const char *path = env->GetStringUTFChars(data_source, nullptr);
     auto *helper = new JniHelper(vm, env, job);
-    QPlayer *pPlayer = new QPlayer(path, helper);
+    auto *pPlayer = new QPlayer(path, helper);
     pPlayer->setRenderCallback(renderFrame);
     pPlayer->prepare();
     //释放掉资源
     env->ReleaseStringUTFChars(data_source,path);
+    return reinterpret_cast<jlong>(pPlayer);
 }
 
 /**

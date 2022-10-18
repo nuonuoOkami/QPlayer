@@ -7,6 +7,7 @@ import android.view.SurfaceView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
+import kotlin.math.log
 
 /**
 
@@ -68,7 +69,9 @@ class QPlayer : SurfaceHolder.Callback, LifecycleObserver {
     fun prepare() { // 我们的准备工作：触发
 
         path="rtmp://media3.scctv.net/live/scctv_800"
-        nativeQPlayer = prepareNative(path!!)
+
+      nativeQPlayer = prepareNative(path!!)
+
 //        startNative(nativeQPlayer!!)
     }
 
