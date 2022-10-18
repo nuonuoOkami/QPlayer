@@ -137,6 +137,7 @@ void VideoChannel::stop() {
 void *task_decode(void *args) {
     auto *channel = static_cast<VideoChannel *>(args);
     channel->decode();
+    return nullptr;
 }
 
 /**
@@ -147,6 +148,7 @@ void *task_play(void *args) {
 
     auto *channel = static_cast<VideoChannel *>(args);
     channel->play();
+    return nullptr;
 
 }
 

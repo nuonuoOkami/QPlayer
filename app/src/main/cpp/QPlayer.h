@@ -25,17 +25,19 @@ private:
     //开始线程
     pthread_t p_thread_start;
     //媒体上下文
-    AVFormatContext *avFormatContext = 0;
+    //https://blog.csdn.net/leixiaohua1020/article/details/14214705
+    AVFormatContext *avFormatContext = nullptr;
     //视频播放流
     VideoChannel *videoChannel=0;
     //总时长
     int duration;
     //是否播放
     bool is_play;
+    RenderingCallBack renderingCallBack;
 
 
 public:
-    QPlayer( char *source ,JniHelper * jniHelper);
+    QPlayer( const char *source ,JniHelper * jniHelper);
     ~QPlayer();
     void prepare();
     void prepare_();

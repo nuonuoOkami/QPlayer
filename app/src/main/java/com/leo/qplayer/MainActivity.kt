@@ -11,18 +11,21 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val player = QPlayer()
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.sampleText.text=stringFromJNI()
+        binding.sampleText.text = stringFromJNI()
+        player.setSurface(binding.surface)
+        player.setPath("rtmp://media3.scctv.net/live/scctv_800")
 
-
+        lifecycle.addObserver(player)
     }
 
 
     external fun stringFromJNI(): String
-    external fun player(path:String):Void
+    external fun player(path: String): Void
 
 
 }
