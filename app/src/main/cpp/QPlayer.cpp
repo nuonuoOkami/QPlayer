@@ -145,7 +145,8 @@ void QPlayer::prepare_() {
             //构造传参
             videoChannel = new VideoChannel(index, avCodecContext, time_base, fps);
             videoChannel->setRenderCallback(renderingCallBack);
-
+            //todo 强行开启先渲染界面
+            start();
         }
 
 
@@ -166,6 +167,7 @@ void QPlayer::start() {
     is_play = true;
     if (videoChannel) {
         videoChannel->start();
+
     }
     pthread_create(&p_thread_start, nullptr, to_start, this); // this == DerryPlayer的实例
 }

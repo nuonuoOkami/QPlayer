@@ -72,7 +72,8 @@ class QPlayer : SurfaceHolder.Callback, LifecycleObserver {
 
       nativeQPlayer = prepareNative(path!!)
 
-//        startNative(nativeQPlayer!!)
+
+       //startNative(nativeQPlayer!!)
     }
 
     companion object {

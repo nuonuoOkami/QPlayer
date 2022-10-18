@@ -2,6 +2,7 @@
 #include <string>
 #include "log4c.h"
 
+
 extern "C" {
 #include <libavutil/avutil.h>
 }
@@ -17,8 +18,6 @@ Java_com_leo_qplayer_MainActivity_stringFromJNI(
         jobject /* this */) {
     std::string hello = "版本号为";
     hello.append(av_version_info());
-
-    SafeQueue<int> safeQueue = SafeQueue<int>();
     return env->NewStringUTF(hello.c_str());
 }
 extern "C"
@@ -32,7 +31,51 @@ ANativeWindow *window = nullptr;
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER; // 静态初始化 锁
 
 
+/**
+ * 渲染界面
+ * @param src_data
+ * @param width
+ * @param height
+ * @param src_linesize
+ */
 void renderFrame(uint8_t *src_data, int width, int height, int src_linesize) {
+
+
+    //src_linesize 保存图像每个通道的内存对齐的步长，即一行的对齐内存的宽度，此值大小等于图像宽度
+    //加锁
+    pthread_mutex_lock(&mutex);
+
+    if (!window) {
+        //window出了问题要解锁 不然卡死了
+        pthread_mutex_unlock(&mutex);
+    }
+
+    //设置属性 宽高行数  window  宽高，样式 rgba 888
+    ANativeWindow_setBuffersGeometry(window, width, height, WINDOW_FORMAT_RGBA_8888);
+    ANativeWindow_Buffer window_buffer;
+    //如果是锁住的就释放一下
+    if (ANativeWindow_lock(window, &window_buffer, 0)) {
+        ANativeWindow_release(window);
+        window = nullptr;
+        pthread_mutex_unlock(&mutex);
+        return;
+    }
+
+    uint8_t *dst_data = static_cast<uint8_t *>(window_buffer.bits);
+    //要*4 因为rgba 各自占了一个字节 stride 可能大于像素宽度
+    int32_t dst_linesize = window_buffer.stride * 4;
+
+
+    for (int i = 0; i < window_buffer.height; ++i) {
+
+        // 复制到哪里  源头  长度  src_linesize 是步长
+//        memcpy(dst_data + i * dst_linesize, src_data + i * src_linesize, src_linesize);
+        memcpy(dst_data + i * dst_linesize, src_data + i * src_linesize, src_linesize);
+    }
+
+    ANativeWindow_unlockAndPost(window);
+    pthread_mutex_unlock(&mutex);
+
 
 }
 
@@ -42,7 +85,7 @@ void renderFrame(uint8_t *src_data, int width, int height, int src_linesize) {
  * @param args
  * @return
  */
-jint JNI_OnLoad(JavaVM * vm, void * args) {
+jint JNI_OnLoad(JavaVM *vm, void *args) {
     ::vm = vm;
     return JNI_VERSION_1_6;
 }
@@ -60,7 +103,7 @@ Java_com_leo_qplayer_QPlayer_prepareNative(JNIEnv *env, jobject job, jstring dat
     pPlayer->setRenderCallback(renderFrame);
     pPlayer->prepare();
     //释放掉资源
-    env->ReleaseStringUTFChars(data_source,path);
+    env->ReleaseStringUTFChars(data_source, path);
     return reinterpret_cast<jlong>(pPlayer);
 }
 
@@ -70,7 +113,10 @@ Java_com_leo_qplayer_QPlayer_prepareNative(JNIEnv *env, jobject job, jstring dat
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_leo_qplayer_QPlayer_startNative(JNIEnv *env, jobject thiz, jlong native_obj) {
-    // TODO: implement startNative()
+    auto *pPlayer = reinterpret_cast<QPlayer *>(native_obj);
+    if (pPlayer) {
+        pPlayer->start();
+    }
 }
 
 

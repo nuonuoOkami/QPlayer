@@ -65,7 +65,7 @@ void VideoChannel::play() {
 
     AVFrame *avFrame = nullptr;
     uint8_t *pointers[4];
-    int linesizes[4];
+    int linesizes[4]; //保存图像每个通道的内存对齐的步长，即一行的对齐内存的宽度，此值大小等于图像宽度
     //申请帧内存 返回负数为失败 因为android 只能显示rgba 而一般是yuv的
     //  align  https://blog.csdn.net/huweijian5/article/details/105832601?utm_medium=distribute.pc_aggpage_search_result.none-task-blog-2~aggregatepage~first_rank_ecpm_v1~rank_v31_ecpm-1-105832601-null-null.pc_agg_new_rank&utm_term=ffmpeg%20%E5%AD%97%E8%8A%82%E5%AF%B9%E9%BD%90&spm=1000.2123.3001.4430
     av_image_alloc(pointers, linesizes, avCodecContext->width, avCodecContext->height,

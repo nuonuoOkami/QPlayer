@@ -1,9 +1,10 @@
 package com.leo.qplayer
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.TextView
+import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import com.leo.qplayer.databinding.ActivityMainBinding
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -21,6 +22,10 @@ class MainActivity : AppCompatActivity() {
         player.setPath("rtmp://media3.scctv.net/live/scctv_800")
 
         lifecycle.addObserver(player)
+
+
+        val wm1 = this.windowManager
+        val width1 = wm1.defaultDisplay.width
     }
 
 
