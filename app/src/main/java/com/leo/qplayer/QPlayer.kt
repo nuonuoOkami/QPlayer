@@ -31,7 +31,6 @@ class QPlayer : SurfaceHolder.Callback, LifecycleObserver {
     }
 
 
-
     override fun surfaceDestroyed(holder: SurfaceHolder) {
 
     }
@@ -67,13 +66,10 @@ class QPlayer : SurfaceHolder.Callback, LifecycleObserver {
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     fun prepare() { // 我们的准备工作：触发
-
-        path="rtmp://media3.scctv.net/live/scctv_800"
-
-      nativeQPlayer = prepareNative(path!!)
+        nativeQPlayer = prepareNative(path!!)
 
 
-       //startNative(nativeQPlayer!!)
+        //startNative(nativeQPlayer!!)
     }
 
     companion object {

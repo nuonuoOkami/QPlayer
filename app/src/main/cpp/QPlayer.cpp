@@ -145,8 +145,7 @@ void QPlayer::prepare_() {
             //构造传参
             videoChannel = new VideoChannel(index, avCodecContext, time_base, fps);
             videoChannel->setRenderCallback(renderingCallBack);
-            //todo 强行开启先渲染界面
-            start();
+
         }
 
 
