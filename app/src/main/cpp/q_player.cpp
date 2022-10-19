@@ -2,7 +2,7 @@
 // Created by leo on 2022/10/16.
 //
 
-#include "QPlayer.h"
+#include "q_player.h"
 #include "log4c.h"
 
 /**
@@ -12,7 +12,7 @@
  */
 void *thread_prepare(void *args) {
 
-    auto *pPlayer = static_cast<QPlayer *>(args);
+    auto *pPlayer = static_cast<q_player *>(args);
     pPlayer->prepare_();
     return nullptr;//切记返回 坑死了
 }
@@ -20,7 +20,7 @@ void *thread_prepare(void *args) {
 /**
  * 准备
  */
-void QPlayer::prepare() {
+void q_player::prepare() {
     //将任务切换到子线程 因为是io操作
     pthread_create(&p_thread_prepare, nullptr, thread_prepare, this);
 }
@@ -29,7 +29,7 @@ void QPlayer::prepare() {
 /**
  * 子线程执行加载任务
  */
-void QPlayer::prepare_() {
+void q_player::prepare_() {
 
 
     //初始化上下文 ，老少爷们全靠你了
@@ -143,7 +143,7 @@ void QPlayer::prepare_() {
             int fps = av_q2d(avStream->avg_frame_rate);
             //Index 为了区分是音频还是视频
             //构造传参
-            videoChannel = new VideoChannel(index, avCodecContext, time_base, fps);
+            videoChannel = new video_channel(index, avCodecContext, time_base, fps);
             videoChannel->setRenderCallback(renderingCallBack);
 
         }
@@ -155,13 +155,13 @@ void QPlayer::prepare_() {
 }
 
 void *to_start(void *args) {
-    auto *player = static_cast<QPlayer *>(args);
+    auto *player = static_cast<q_player *>(args);
     player->start_();
     return nullptr;
 
 }
 
-void QPlayer::start() {
+void q_player::start() {
 
     is_play = true;
     if (videoChannel) {
@@ -176,17 +176,17 @@ void QPlayer::start() {
  * 开始播放
  */
 
-QPlayer::QPlayer(const char *source, JniHelper *helper) {
+q_player::q_player(const char *source, JniHelper *helper) {
     this->source = new char[strlen(source) + 1];
     strcpy(this->source, source); // 把源 Copy给成员
 
 }
 
-QPlayer::~QPlayer() {
+q_player::~q_player() {
 
 }
 
-void QPlayer::start_() {
+void q_player::start_() {
 
 
     while (is_play) {
@@ -219,6 +219,6 @@ void QPlayer::start_() {
  * 设置渲染接口
  * @param renderingCallBack
  */
-void QPlayer::setRenderCallback(RenderingCallBack renderingCallBack) {
+void q_player::setRenderCallback(RenderingCallBack renderingCallBack) {
     this->renderingCallBack = renderingCallBack;
 }

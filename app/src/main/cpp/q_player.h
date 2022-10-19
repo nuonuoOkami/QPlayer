@@ -2,11 +2,11 @@
 // Created by leo on 2022/10/16.
 //
 
-#ifndef QPLAYER_QPLAYER_H
-#define QPLAYER_QPLAYER_H
+#ifndef QPLAYER_Q_PLAYER_H
+#define QPLAYER_Q_PLAYER_H
 
 #include <pthread.h>
-#include "VideoChannel.h"
+#include "video_channel.h"
 #include "jni_helper.h"
 
 extern "C"
@@ -15,7 +15,7 @@ extern "C"
 #include <libavutil/time.h>
 }
 
-class QPlayer {
+class q_player {
 private:
 
     //路径
@@ -28,7 +28,7 @@ private:
     //https://blog.csdn.net/leixiaohua1020/article/details/14214705
     AVFormatContext *avFormatContext = 0;
     //视频播放流
-    VideoChannel *videoChannel=0;
+    video_channel *videoChannel=0;
     //总时长
     int duration;
     //是否播放
@@ -37,8 +37,8 @@ private:
 
 
 public:
-    QPlayer( const char *source ,JniHelper * jniHelper);
-    ~QPlayer();
+    q_player(const char *source , JniHelper * jniHelper);
+    ~q_player();
     void prepare();
     void prepare_();
 
@@ -54,11 +54,11 @@ public:
 
     void stop();
 
-    void stop_(QPlayer *);
+    void stop_(q_player *);
 
 
 
 };
 
 
-#endif //QPLAYER_QPLAYER_H
+#endif //QPLAYER_Q_PLAYER_H

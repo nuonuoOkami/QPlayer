@@ -1,10 +1,10 @@
 
-#include "VideoChannel.h"
+#include "video_channel.h"
 
 /**
  * 解码
  */
-void VideoChannel::decode() {
+void video_channel::decode() {
     AVPacket *avPacket = nullptr;
     while (is_play) {
         if (is_play && aVFrames.size() > 100) {
@@ -61,7 +61,7 @@ void VideoChannel::decode() {
 /**
  * 播放
  */
-void VideoChannel::play() {
+void video_channel::play() {
 
     AVFrame *avFrame = nullptr;
     uint8_t *pointers[4];
@@ -118,14 +118,14 @@ void VideoChannel::play() {
  * 设置渲染回调给native-lib.cpp
  * @param renderCallback
  */
-void VideoChannel::setRenderCallback(RenderingCallBack renderCallback) {
+void video_channel::setRenderCallback(RenderingCallBack renderCallback) {
     this->renderingCallBack = renderCallback;
 }
 
 /**
  * 停止
  */
-void VideoChannel::stop() {
+void video_channel::stop() {
 
 
 }
@@ -135,7 +135,7 @@ void VideoChannel::stop() {
  * @param args
  */
 void *task_decode(void *args) {
-    auto *channel = static_cast<VideoChannel *>(args);
+    auto *channel = static_cast<video_channel *>(args);
     channel->decode();
     return nullptr;
 }
@@ -146,13 +146,13 @@ void *task_decode(void *args) {
  */
 void *task_play(void *args) {
 
-    auto *channel = static_cast<VideoChannel *>(args);
+    auto *channel = static_cast<video_channel *>(args);
     channel->play();
     return nullptr;
 
 }
 
-VideoChannel::~VideoChannel() {
+video_channel::~video_channel() {
 
 }
 
@@ -161,7 +161,7 @@ VideoChannel::~VideoChannel() {
  * 任务开始
  * 任务开始 包含解压缩和塞入数据 play只是播放最后的数据
  */
-void VideoChannel::start() {
+void video_channel::start() {
 
     is_play = true;
     aVPackets.setPlayState(true);
@@ -216,8 +216,8 @@ void dumpAVPackets(queue<AVPacket *> &queue) {
  * @param time_base  实践基
  * @param fps  帧率
  */
-VideoChannel::VideoChannel(int type_index, AVCodecContext *codecContext, AVRational time_base,
-                           int fps) : BaseChannel(type_index, codecContext, time_base), fps(fps) {
+video_channel::video_channel(int type_index, AVCodecContext *codecContext, AVRational time_base,
+                             int fps) : base_channel(type_index, codecContext, time_base), fps(fps) {
 
     aVFrames.setDumpListener(dumpAvFrames);//设置抛弃回调 用于同步
     aVPackets.setDumpListener(dumpAVPackets);//设置抛弃回调 用于同步  其实理论上用不到
