@@ -14,7 +14,7 @@ extern "C"//ffmpeg 需要extern c
 /**
  * 封装基础类给视频音频使用
  */
-class base_channel {
+class BaseChannel {
 public:
     int type_index;//根据 AVFormatContext.nb_streams 获取自己音视频类型
     bool is_play;//播放状态
@@ -23,12 +23,12 @@ public:
     SafeQueue<AVFrame *> aVFrames;//从信息源里获取出来的原始压缩数据包
     SafeQueue<AVPacket *> aVPackets;//解析出来的原始包 还需要音频/视频的再次解析
 public:
-    base_channel(int typeIndex, AVCodecContext *avCodecContext, AVRational timeBase)
+    BaseChannel(int typeIndex, AVCodecContext *avCodecContext, AVRational timeBase)
             : avCodecContext(avCodecContext),
               type_index(typeIndex), time_base(timeBase) {
     };
 
-    virtual ~base_channel() {
+    virtual ~BaseChannel() {
         aVFrames.clear();
         aVPackets.clear();
     }

@@ -10,7 +10,7 @@ extern "C" {
 #include <android/native_window_jni.h>
 
 #include "safe_queue.h"
-#include "q_player.h"
+#include "QPlayer.h"
 
 extern "C" JNIEXPORT jstring JNICALL
 Java_com_leo_qplayer_MainActivity_stringFromJNI(
@@ -24,6 +24,7 @@ extern "C"
 JNIEXPORT jobject JNICALL
 Java_com_leo_qplayer_MainActivity_player(JNIEnv *env, jobject thiz, jstring path) {
 
+    return thiz;
 }
 
 JavaVM *vm = nullptr;
@@ -99,7 +100,7 @@ Java_com_leo_qplayer_QPlayer_prepareNative(JNIEnv *env, jobject job, jstring dat
 
     const char *path = env->GetStringUTFChars(data_source, nullptr);
     auto *helper = new JniHelper(vm, env, job);
-    auto *pPlayer = new q_player(path, helper);
+    auto *pPlayer = new QPlayer(path, helper);
     pPlayer->setRenderCallback(renderFrame);
     pPlayer->prepare();
     //释放掉资源
@@ -113,7 +114,7 @@ Java_com_leo_qplayer_QPlayer_prepareNative(JNIEnv *env, jobject job, jstring dat
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_leo_qplayer_QPlayer_startNative(JNIEnv *env, jobject thiz, jlong native_obj) {
-    auto *pPlayer = reinterpret_cast<q_player *>(native_obj);
+    auto *pPlayer = reinterpret_cast<QPlayer *>(native_obj);
     if (pPlayer) {
         pPlayer->start();
     }

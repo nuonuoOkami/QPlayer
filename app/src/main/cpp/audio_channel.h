@@ -4,9 +4,9 @@
 
 #ifndef QPLAYER_AUDIO_CHANNEL_H
 #define QPLAYER_AUDIO_CHANNEL_H
+#include "BaseChannel.h"
 
-
-class audio_channel {
+class AudioChannel: public BaseChannel{
 
 };
 

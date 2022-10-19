@@ -2,10 +2,10 @@
 // Created by leo on 2022/10/16.
 //
 
-#ifndef QPLAYER_VIDEO_CHANNEL_H
-#define QPLAYER_VIDEO_CHANNEL_H
+#ifndef QPLAYER_VIDEOCHANNEL_H
+#define QPLAYER_VIDEOCHANNEL_H
 
-#include "base_channel.h"
+#include "BaseChannel.h"
 
 extern "C"
 {
@@ -18,7 +18,7 @@ extern "C"
  * 视频信息流处理
  */
 typedef void(*RenderingCallBack)(uint8_t *, int, int, int);//渲染回调
-class video_channel : public base_channel {
+class VideoChannel : public BaseChannel {
 
 private:
     pthread_t p_thread_decode;//解包用线程
@@ -28,9 +28,9 @@ private:
 
 
 public:
-    video_channel(int type_index, AVCodecContext *codecContext, AVRational time_base, int fps);//构造函数
+    VideoChannel(int type_index, AVCodecContext *codecContext, AVRational time_base, int fps);//构造函数
     //析构函数
-    ~video_channel();
+    ~VideoChannel();
 
     void  start();//播放
     void  stop();//停止播放
