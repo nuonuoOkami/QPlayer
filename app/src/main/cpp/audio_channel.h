@@ -30,11 +30,26 @@ public:
     int out_sample_rate = 0;
     //buffer大小
     int out_buffer_size = 0;
-    //堆区开辟大小
+    // 重采样需要 uint8_t类型
     uint8_t *out_buffers = 0;
-    //转换上下文
+    // 重采样 结构体   https://blog.csdn.net/Jammg/article/details/52688506
+    // https://zhuanlan.zhihu.com/p/545279669
     SwrContext *swrContext = nullptr;
 
+public:
+    AudioChannel(int type_index, AVCodecContext *codecContext, AVRational time_base);
+
+    ~AudioChannel();
+
+    void start();
+
+    void stop();
+
+    void audio_decode();
+
+    void audio_player();
+
+    int getPcm();
 
 };
 
