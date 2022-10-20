@@ -37,7 +37,7 @@ public:
     uint8_t *out_buffers = 0;
     // 重采样 结构体   https://blog.csdn.net/Jammg/article/details/52688506
     // https://zhuanlan.zhihu.com/p/545279669
-    SwrContext *swrContext = nullptr;
+    SwrContext *swrContext = 0;
 
     //音频时长
     double audio_time;
@@ -54,10 +54,10 @@ public:
     SLObjectItf outputMixObject = 0;
     //播放器
     SLObjectItf bqPlayerObject = 0;
-    //播放器
-    SLPlayItf slPlayItf = 0;
+    //播放器接口
+    SLPlayItf bqPlayerPlay = 0;
     //播放器队列
-    SLAndroidSimpleBufferQueueItf slAndroidSimpleBufferQueueItf = 0;
+    SLAndroidSimpleBufferQueueItf playBufferQueue = 0;
 
 public:
     AudioChannel(int type_index, AVCodecContext *codecContext, AVRational time_base);

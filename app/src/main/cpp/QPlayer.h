@@ -8,6 +8,7 @@
 #include <pthread.h>
 #include "VideoChannel.h"
 #include "jni_helper.h"
+#include "audio_channel.h"
 
 extern "C"
 {
@@ -29,6 +30,8 @@ private:
     AVFormatContext *avFormatContext = 0;
     //视频播放流
     VideoChannel *videoChannel=0;
+    //音频流
+    AudioChannel *audio_channel = 0;
     //总时长
     int duration;
     //是否播放

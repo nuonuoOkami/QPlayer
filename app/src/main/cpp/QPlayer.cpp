@@ -146,6 +146,8 @@ void QPlayer::prepare_() {
             videoChannel = new VideoChannel(index, avCodecContext, time_base, fps);
             videoChannel->setRenderCallback(renderingCallBack);
 
+        } else if (parameters->codec_type == AVMEDIA_TYPE_AUDIO) {
+            audio_channel = new AudioChannel(index, avCodecContext, time_base);
         }
 
 
@@ -167,6 +169,9 @@ void QPlayer::start() {
     if (videoChannel) {
         videoChannel->start();
 
+    }
+    if (audio_channel) {
+        audio_channel->start();
     }
     pthread_create(&p_thread_start, nullptr, to_start, this); // this == DerryPlayer的实例
 }
@@ -192,6 +197,16 @@ void QPlayer::start_() {
     while (is_play) {
         //todo 延迟代码
 
+//        if (videoChannel && videoChannel->aVPackets.size() > 100) {
+//            av_usleep(10 * 1000); // 单位：microseconds 微妙 10毫秒
+//            continue;
+//        }
+        // 解决方案：音频 我不丢弃数据，等待队列中数据 被消费 内存泄漏点1.2
+//        if (audio_channel && audio_channel->aVPackets.size() > 100) {
+//            av_usleep(10 * 1000); // 单位：microseconds 微妙 10毫秒
+//            continue;
+//        }
+
         //申请 AVPacket
         AVPacket *avPacket = av_packet_alloc();
 
@@ -203,6 +218,10 @@ void QPlayer::start_() {
             //匹配一下 如果videoChannel 不是null 而且对上号
             if (videoChannel && videoChannel->type_index == avPacket->stream_index) {
                 videoChannel->aVPackets.insert(avPacket);
+            } else if (audio_channel && audio_channel->type_index == avPacket->stream_index) {
+                audio_channel->aVPackets.insert(avPacket);
+
+
             }
 
 
