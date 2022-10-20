@@ -1,11 +1,14 @@
 //
-// Created by 于海 on 2022/10/19.
+// Created by yuhai on 2022/10/19.
 //
 
 #ifndef QPLAYER_AUDIO_CHANNEL_H
 #define QPLAYER_AUDIO_CHANNEL_H
 
 #include "BaseChannel.h"
+//导入 OpenSLES 相关 这块我也不懂
+#include <SLES/OpenSLES.h>
+#include <SLES/OpenSLES_Android.h>
 
 extern "C"
 {
@@ -36,6 +39,26 @@ public:
     // https://zhuanlan.zhihu.com/p/545279669
     SwrContext *swrContext = nullptr;
 
+    //音频时长
+    double audio_time;
+
+
+    //OpenSLES 相关
+public:
+    //引擎 SLObjectItf 是很重要的接口,基本上想要的东西都通过id可以拿到
+    //这玩意居然是个指针
+    SLObjectItf engineObject = 0;
+    //引擎接口
+    SLEngineItf engineInterface = 0;
+    //混音器
+    SLObjectItf outputMixObject = 0;
+    //播放器
+    SLObjectItf bqPlayerObject = 0;
+    //播放器
+    SLPlayItf slPlayItf = 0;
+    //播放器队列
+    SLAndroidSimpleBufferQueueItf slAndroidSimpleBufferQueueItf = 0;
+
 public:
     AudioChannel(int type_index, AVCodecContext *codecContext, AVRational time_base);
 
@@ -47,7 +70,7 @@ public:
 
     void audio_decode();
 
-    void audio_player();
+    void audio_play();
 
     int getPcm();
 
