@@ -1,7 +1,7 @@
 package com.leo.qplayer
 
 import android.os.Bundle
-import android.util.Log
+
 import androidx.appcompat.app.AppCompatActivity
 import com.leo.qplayer.databinding.ActivityMainBinding
 
