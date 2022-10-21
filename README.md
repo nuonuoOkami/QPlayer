@@ -1,6 +1,6 @@
 # QPlayer
 
-![Image text](https://img1.imgtp.com/2022/10/21/gQlCXOhj.png)
+![Image text](https://github.com/nuonuoOkami/images/blob/main/qplayer.png.png)
 ### 依赖库
 ffmpeg+OpenSlES 
 ***
