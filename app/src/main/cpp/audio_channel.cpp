@@ -27,21 +27,16 @@ AudioChannel::AudioChannel(int type_index, AVCodecContext *codecContext, AVRatio
     //通道*采样率*采样格式
     out_buffer_size = out_channels * out_sample_rate * out_sample_size;
 
-    LOGE("out_sample_rate%  d",out_sample_rate)
-    LOGE("out_buffer_size%  d",out_buffer_size)
-    LOGE("out_channels%  d",out_channels)
-    LOGE("out_sample_size%  d",out_sample_size)
-
     //堆开辟记得释放
     out_buffers = static_cast<uint8_t *> (malloc(out_buffer_size));
     //https://blog.csdn.net/Explorer_day/article/details/76332556
     //如果第一个参数指向为NULL,则创建一个新的SwrContext，否则对其进行参数配置。
-    swrContext = swr_alloc_set_opts(0,
+    swrContext = swr_alloc_set_opts(nullptr,
                                     AV_CH_LAYOUT_STEREO,
-                                    AV_SAMPLE_FMT_S16P,
+                                    AV_SAMPLE_FMT_S16,
                                     out_sample_rate,
-                                    codecContext->channel_layout,
-                                    codecContext->sample_fmt, codecContext->sample_rate, 0,
+                                    avCodecContext->channel_layout,
+                                    avCodecContext->sample_fmt, codecContext->sample_rate, 0,
                                     0);
 
 
@@ -174,12 +169,12 @@ void AudioChannel::audio_play() {
 
     //音轨
     SLDataLocator_OutputMix slDataLocatorOutputMix = {SL_DATALOCATOR_OUTPUTMIX, outputMixObject};
-   // SLDataSink audioSnk = {&slDataLocatorOutputMix, NULL};
+    // SLDataSink audioSnk = {&slDataLocatorOutputMix, NULL};
     SLDataSink audioSnk = {&slDataLocatorOutputMix, NULL};
 
     // 接口配置
-    const  SLInterfaceID ids[1] = {SL_IID_BUFFERQUEUE};
-    const  SLboolean req[1] = {SL_BOOLEAN_TRUE};
+    const SLInterfaceID ids[1] = {SL_IID_BUFFERQUEUE};
+    const SLboolean req[1] = {SL_BOOLEAN_TRUE};
 
     //创建播放器 data source 代表着输入源的信息，即数据从哪儿来、输入的数据参数是怎样的；
     // 而 data sink 则代表着输出的信息，即数据输出到哪儿、以什么样的参数来输出。
