@@ -10,7 +10,7 @@ extern "C" {
 #include <android/native_window_jni.h>
 
 #include "safe_queue.h"
-#include "QPlayer.h"
+#include "q_player.h"
 
 extern "C" JNIEXPORT jstring JNICALL
 Java_com_leo_qplayer_MainActivity_stringFromJNI(
@@ -55,7 +55,7 @@ void renderFrame(uint8_t *src_data, int width, int height, int src_linesize) {
     ANativeWindow_setBuffersGeometry(window, width, height, WINDOW_FORMAT_RGBA_8888);
     ANativeWindow_Buffer window_buffer;
     //如果是锁住的就释放一下
-    if (ANativeWindow_lock(window, &window_buffer, 0)) {
+    if (ANativeWindow_lock(window, &window_buffer, nullptr)) {
         ANativeWindow_release(window);
         window = nullptr;
         pthread_mutex_unlock(&mutex);

@@ -2,11 +2,11 @@
 // Created by leo on 2022/10/16.
 //
 
-#ifndef QPLAYER_QPLAYER_H
-#define QPLAYER_QPLAYER_H
+#ifndef QPLAYER_Q_PLAYER_H
+#define QPLAYER_Q_PLAYER_H
 
 #include <pthread.h>
-#include "VideoChannel.h"
+#include "video_channel.h"
 #include "jni_helper.h"
 #include "audio_channel.h"
 
@@ -29,7 +29,7 @@ private:
     //https://blog.csdn.net/leixiaohua1020/article/details/14214705
     AVFormatContext *avFormatContext = 0;
     //视频播放流
-    VideoChannel *videoChannel=0;
+    VideoChannel *videoChannel = 0;
     //音频流
     AudioChannel *audio_channel = 0;
     //总时长
@@ -40,13 +40,17 @@ private:
 
 
 public:
-    QPlayer(const char *source , JniHelper * jniHelper);
+    QPlayer(const char *source, JniHelper *jniHelper);
+
     ~QPlayer();
+
     void prepare();
+
     void prepare_();
 
     void start();
-    void start_();
+
+    void start_play();
 
 
     void setRenderCallback(RenderingCallBack renderingCallBack);
@@ -60,8 +64,7 @@ public:
     void stop_(QPlayer *);
 
 
-
 };
 
 
-#endif //QPLAYER_QPLAYER_H
+#endif //QPLAYER_Q_PLAYER_H

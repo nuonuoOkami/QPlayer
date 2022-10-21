@@ -2,7 +2,7 @@
 // Created by leo on 2022/10/16.
 //
 
-#include "QPlayer.h"
+#include "q_player.h"
 #include "log4c.h"
 
 /**
@@ -11,7 +11,6 @@
  * @return 
  */
 void *thread_prepare(void *args) {
-
     auto *pPlayer = static_cast<QPlayer *>(args);
     pPlayer->prepare_();
     return nullptr;//切记返回 坑死了
@@ -156,9 +155,9 @@ void QPlayer::prepare_() {
 
 }
 
-void *to_start(void *args) {
+void *thread_start(void *args) {
     auto *player = static_cast<QPlayer *>(args);
-    player->start_();
+    player->start_play();
     return nullptr;
 
 }
@@ -166,14 +165,18 @@ void *to_start(void *args) {
 void QPlayer::start() {
 
     is_play = true;
+    //传入audio 用于同步
     if (videoChannel) {
+        //判断audio_channel是否为null
+        if (audio_channel) {
+            videoChannel->putAudio(audio_channel);
+        }
         videoChannel->start();
-
     }
     if (audio_channel) {
         audio_channel->start();
     }
-    pthread_create(&p_thread_start, nullptr, to_start, this); // this == DerryPlayer的实例
+    pthread_create(&p_thread_start, nullptr, thread_start, this); // this == DerryPlayer的实例
 }
 
 
@@ -191,21 +194,19 @@ QPlayer::~QPlayer() {
 
 }
 
-void QPlayer::start_() {
+void QPlayer::start_play() {
 
 
     while (is_play) {
-        //todo 延迟代码
-
-//        if (videoChannel && videoChannel->aVPackets.size() > 100) {
-//            av_usleep(10 * 1000); // 单位：microseconds 微妙 10毫秒
-//            continue;
-//        }
-        // 解决方案：音频 我不丢弃数据，等待队列中数据 被消费 内存泄漏点1.2
-//        if (audio_channel && audio_channel->aVPackets.size() > 100) {
-//            av_usleep(10 * 1000); // 单位：microseconds 微妙 10毫秒
-//            continue;
-//        }
+        //避免内存爆炸
+        if (videoChannel && videoChannel->aVPackets.size() > 100) {
+            av_usleep(10 * 1000); // 单位：microseconds 微妙 10毫秒
+            continue;
+        }
+        if (audio_channel && audio_channel->aVPackets.size() > 100) {
+            av_usleep(10 * 1000); // 单位：microseconds 微妙 10毫秒
+            continue;
+        }
 
         //申请 AVPacket
         AVPacket *avPacket = av_packet_alloc();
@@ -214,16 +215,12 @@ void QPlayer::start_() {
         int result = av_read_frame(avFormatContext, avPacket);
         if (!result)//没失败
         {
-
             //匹配一下 如果videoChannel 不是null 而且对上号
             if (videoChannel && videoChannel->type_index == avPacket->stream_index) {
                 videoChannel->aVPackets.insert(avPacket);
             } else if (audio_channel && audio_channel->type_index == avPacket->stream_index) {
                 audio_channel->aVPackets.insert(avPacket);
-
-
             }
-
 
         } else if (result == AVERROR_EOF) {//读到末尾
 

@@ -5,7 +5,7 @@
 #ifndef QPLAYER_AUDIO_CHANNEL_H
 #define QPLAYER_AUDIO_CHANNEL_H
 
-#include "BaseChannel.h"
+#include "base_channel.h"
 //导入 OpenSLES 相关 这块我也不懂
 #include <SLES/OpenSLES.h>
 #include <SLES/OpenSLES_Android.h>

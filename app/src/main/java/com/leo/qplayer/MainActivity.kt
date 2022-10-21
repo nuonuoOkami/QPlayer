@@ -21,7 +21,6 @@ class MainActivity : AppCompatActivity() {
         player.setSurface(binding.surface)
         //player.setPath("rtmp://media3.scctv.net/live/scctv_800")
         player.setPath("rtmp://void.75755.com/liverepeater/500106?wsSecret=fbc187bda06c3af2f6bda001d339277d&wsTime=634fbba9")
-
         lifecycle.addObserver(player)
         binding.start.setOnClickListener {
             player.start()

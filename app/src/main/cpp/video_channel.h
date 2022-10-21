@@ -2,10 +2,11 @@
 // Created by leo on 2022/10/16.
 //
 
-#ifndef QPLAYER_VIDEOCHANNEL_H
-#define QPLAYER_VIDEOCHANNEL_H
+#ifndef QPLAYER_VIDEO_CHANNEL_H
+#define QPLAYER_VIDEO_CHANNEL_H
 
-#include "BaseChannel.h"
+#include "base_channel.h"
+#include "audio_channel.h"
 
 extern "C"
 {
@@ -25,6 +26,8 @@ private:
     pthread_t p_thread_play;//播放用线程
     int fps;//帧率
     RenderingCallBack renderingCallBack;//渲染回调 因为会用到ANativeWindow
+    //传入音频方便同步
+    AudioChannel *audioChannel = 0;
 
 
 public:
@@ -32,11 +35,12 @@ public:
     //析构函数
     ~VideoChannel();
 
-    void  start();//播放
-    void  stop();//停止播放
-    void  decode();//解码
-     void  play();//播放
+    void start();//播放
+    void stop();//停止播放
+    void decode();//解码
+    void play();//播放
     void setRenderCallback(RenderingCallBack renderCallback);//设置渲回调
+    void putAudio(AudioChannel*);
 
 
 };

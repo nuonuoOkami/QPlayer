@@ -3,7 +3,6 @@
 //
 
 #include "audio_channel.h"
-#include "audio_channel.h"
 #include "log4c.h"
 
 /**
@@ -45,7 +44,7 @@ AudioChannel::AudioChannel(int type_index, AVCodecContext *codecContext, AVRatio
 
 }
 
-AudioChannel::~AudioChannel() noexcept {
+AudioChannel::~AudioChannel()  {
     if (swrContext) {//释放
         swr_free(&swrContext);
     }
