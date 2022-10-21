@@ -218,10 +218,15 @@ void dumpAVPackets(queue<AVPacket *> &queue) {
  * @param fps  帧率
  */
 VideoChannel::VideoChannel(int type_index, AVCodecContext *codecContext, AVRational time_base,
-                             int fps) : BaseChannel(type_index, codecContext, time_base), fps(fps) {
+                           double fps) : BaseChannel(type_index, codecContext, time_base), fps(fps) {
 
     aVFrames.setDumpListener(dumpAvFrames);//设置抛弃回调 用于同步
     aVPackets.setDumpListener(dumpAVPackets);//设置抛弃回调 用于同步  其实理论上用不到
+}
+
+void VideoChannel::setJniHelper(JniHelper *helper) {
+    this->jniHelper = helper;
+
 }
 
 /**

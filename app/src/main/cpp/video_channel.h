@@ -24,14 +24,16 @@ class VideoChannel : public BaseChannel {
 private:
     pthread_t p_thread_decode;//解包用线程
     pthread_t p_thread_play;//播放用线程
-    int fps;//帧率
+    double fps;//帧率
     RenderingCallBack renderingCallBack;//渲染回调 因为会用到ANativeWindow
     //传入音频方便同步
     AudioChannel *audioChannel = 0;
 
 
+
 public:
-    VideoChannel(int type_index, AVCodecContext *codecContext, AVRational time_base, int fps);//构造函数
+    JniHelper *jniHelper = 0;
+    VideoChannel(int type_index, AVCodecContext *codecContext, AVRational time_base, double fps);//构造函数
     //析构函数
     ~VideoChannel();
 
@@ -40,8 +42,11 @@ public:
     void decode();//解码
     void play();//播放
     void setRenderCallback(RenderingCallBack renderCallback);//设置渲回调
-    void putAudio(AudioChannel*);
+    //设置videoChannel 用于同步
+    void putAudio(AudioChannel *);
 
+    //设置jniHelper
+    void setJniHelper(JniHelper *);
 
 };
 

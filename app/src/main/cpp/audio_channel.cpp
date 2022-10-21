@@ -44,7 +44,7 @@ AudioChannel::AudioChannel(int type_index, AVCodecContext *codecContext, AVRatio
 
 }
 
-AudioChannel::~AudioChannel()  {
+AudioChannel::~AudioChannel() {
     if (swrContext) {//释放
         swr_free(&swrContext);
     }
@@ -309,6 +309,15 @@ void AudioChannel::audio_decode() {
     av_packet_free(&avPacket);
     avPacket = nullptr;
 
+}
+
+
+/**
+ * 设置对外jni回调
+ * @param helper
+ */
+void AudioChannel::setJniHelper(JniHelper *helper) {
+    this->jniHelper = helper;
 }
 
 /**

@@ -42,6 +42,10 @@ public:
     //音频时长
     double audio_time;
 
+    //jniHelper
+    JniHelper *jniHelper = 0;
+
+
 
     //OpenSLES 相关
 public:
@@ -73,6 +77,8 @@ public:
     void audio_play();
 
     int getPcm();
+
+    void setJniHelper(JniHelper *jniHelper);
 
 };
 

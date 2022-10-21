@@ -19,24 +19,33 @@ extern "C"
 class QPlayer {
 private:
 
+
     //路径
     char *source = 0;
     //准备线程
     pthread_t p_thread_prepare;
     //开始线程
     pthread_t p_thread_start;
+    //停止线程
+    pthread_t p_thread_stop;
+    //seek 锁
+    pthread_mutex_t p_thread_seek_mutex;
+
     //媒体上下文
     //https://blog.csdn.net/leixiaohua1020/article/details/14214705
     AVFormatContext *avFormatContext = 0;
     //视频播放流
-    VideoChannel *videoChannel = 0;
+    VideoChannel *video_channel = 0;
     //音频流
     AudioChannel *audio_channel = 0;
     //总时长
-    int duration;
+    int64_t duration;
     //是否播放
     bool is_play;
     RenderingCallBack renderingCallBack;
+
+    //JNI层回调
+    JniHelper *jniHelper;
 
 
 public:
@@ -46,7 +55,7 @@ public:
 
     void prepare();
 
-    void prepare_();
+    void start_prepare();
 
     void start();
 
@@ -61,7 +70,7 @@ public:
 
     void stop();
 
-    void stop_(QPlayer *);
+    void start_stop(QPlayer *);
 
 
 };

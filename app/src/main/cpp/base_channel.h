@@ -9,6 +9,7 @@ extern "C"//ffmpeg 需要extern c
 
 #ifndef QPLAYER_BASECHANNEL_H
 #define QPLAYER_BASECHANNEL_H
+#include "jni_helper.h"
 
 
 /**
