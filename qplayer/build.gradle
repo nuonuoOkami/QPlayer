@@ -2,7 +2,7 @@ plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
 }
-
+apply from: "${rootProject.rootDir.path}/script/publication.gradle"
 android {
     compileSdk 32
 
