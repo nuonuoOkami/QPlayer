@@ -13,7 +13,7 @@ extern "C" {
 #include "q_player.h"
 
 extern "C" JNIEXPORT jstring JNICALL
-Java_com_leo_qplayer_MainActivity_stringFromJNI(
+Java_com_nuonuo_qplayer_QPlayer__stringFromJNI(
         JNIEnv *env,
         jobject /* this */) {
     std::string hello = "版本号为";
@@ -22,7 +22,7 @@ Java_com_leo_qplayer_MainActivity_stringFromJNI(
 }
 extern "C"
 JNIEXPORT jobject JNICALL
-Java_com_leo_qplayer_MainActivity_player(JNIEnv *env, jobject thiz, jstring path) {
+Java_com_nuonuo_qplayer_QPlayer__player(JNIEnv *env, jobject thiz, jstring path) {
 
     return thiz;
 }
@@ -96,7 +96,7 @@ jint JNI_OnLoad(JavaVM *vm, void *args) {
  */
 extern "C"
 JNIEXPORT jlong JNICALL
-Java_com_leo_qplayer_QPlayer_prepareNative(JNIEnv *env, jobject job, jstring data_source) {
+Java_com_nuonuo_qplayer_QPlayer_prepareNative(JNIEnv *env, jobject job, jstring data_source) {
 
     const char *path = env->GetStringUTFChars(data_source, nullptr);
     auto *helper = new JniHelper(vm, env, job);
@@ -113,7 +113,7 @@ Java_com_leo_qplayer_QPlayer_prepareNative(JNIEnv *env, jobject job, jstring dat
  */
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_leo_qplayer_QPlayer_startNative(JNIEnv *env, jobject thiz, jlong native_obj) {
+Java_com_nuonuo_qplayer_QPlayer_startNative(JNIEnv *env, jobject thiz, jlong native_obj) {
     auto *pPlayer = reinterpret_cast<QPlayer *>(native_obj);
     if (pPlayer) {
         pPlayer->start();
@@ -126,7 +126,7 @@ Java_com_leo_qplayer_QPlayer_startNative(JNIEnv *env, jobject thiz, jlong native
  */
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_leo_qplayer_QPlayer_stopNative(JNIEnv *env, jobject thiz, jlong native_obj) {
+Java_com_nuonuo_qplayer_QPlayer_stopNative(JNIEnv *env, jobject thiz, jlong native_obj) {
     // TODO: implement stopNative()
 }
 
@@ -135,7 +135,7 @@ Java_com_leo_qplayer_QPlayer_stopNative(JNIEnv *env, jobject thiz, jlong native_
  */
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_leo_qplayer_QPlayer_setSurfaceNative(JNIEnv *env, jobject thiz, jobject surface,
+Java_com_nuonuo_qplayer_QPlayer_setSurfaceNative(JNIEnv *env, jobject thiz, jobject surface,
                                               jlong native_obj) {
     pthread_mutex_lock(&mutex);
 

@@ -1,13 +1,11 @@
-package com.leo.qplayer
+package com.nuonuo.qplayer
 
-import android.util.Log
 import android.view.Surface
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
-import kotlin.math.log
 
 /**
 

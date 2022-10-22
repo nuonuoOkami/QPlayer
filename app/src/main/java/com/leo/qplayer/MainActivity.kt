@@ -4,6 +4,7 @@ import android.os.Bundle
 
 import androidx.appcompat.app.AppCompatActivity
 import com.leo.qplayer.databinding.ActivityMainBinding
+import com.nuonuo.qplayer.QPlayer
 
 
 class MainActivity : AppCompatActivity() {
@@ -28,10 +29,6 @@ class MainActivity : AppCompatActivity() {
 
 
     }
-
-
-    external fun stringFromJNI(): String
-    external fun player(path: String): Void
 
 
 }
