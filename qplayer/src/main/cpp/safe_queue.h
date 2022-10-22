@@ -19,7 +19,7 @@ template<typename T>//函数泛型
 class SafeQueue {
 private:
     typedef void (*ReleaseListener)(T *); // 函数指针定义 回调 用来释放T里面的内容的;
-    typedef void (*DumpListener)(queue<T> &); // 函数指针定义 回调 用来释放T里面的内容的;
+    typedef void (*DumpListener)(queue<T>&); // 函数指针定义 回调 用来释放T里面的内容的;
 private:
     ReleaseListener release_listener;
     DumpListener dump_listener;
@@ -146,9 +146,9 @@ public:
     /**
      * 清理所有数据
      */
-    void dumpQueue() {
+ void dumpQueue() {
         pthread_mutex_lock(&lock);
-        if (dump_listener) { dump_listener(&queue); }
+        if (dump_listener) { dump_listener(queue); }
         pthread_mutex_unlock(&lock);
     }
 

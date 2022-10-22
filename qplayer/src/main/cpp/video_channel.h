@@ -27,7 +27,7 @@ private:
     double fps;//帧率
     RenderingCallBack renderingCallBack;//渲染回调 因为会用到ANativeWindow
     //传入音频方便同步
-    AudioChannel *audioChannel = 0;
+    AudioChannel *audio_Channel = 0;
 
 
 

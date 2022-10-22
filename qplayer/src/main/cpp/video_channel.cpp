@@ -92,7 +92,52 @@ void VideoChannel::play() {
         sws_scale(swsContext, avFrame->data, avFrame->linesize, 0, avCodecContext->height, pointers,
                   linesizes);
 
-        //todo 同步代码
+
+        // extra_delay = repeat_pict / (2*fps)
+        //额外的延迟时间 可能为0
+        double extra_delay = avFrame->repeat_pict / (2 * fps);
+        //一帧的延迟时间
+        double fps_delay = 1.0 / fps;
+        //一帧真正需要延迟的时间
+        double frame_real_delay = fps_delay + extra_delay;
+
+        //视频播放进度   best_effort_timestamp -->//https://blog.csdn.net/H514434485/article/details/77619872
+        double video_play_time = av_q2d(time_base);
+        avFrame->best_effort_timestamp * av_q2d(time_base);
+        //音频播放进度
+        double audio_play_time = audio_Channel->audio_time;
+
+
+        //获取两者时间差
+        double time_diff = video_play_time - audio_play_time;
+
+        //视频快
+        if (time_diff > 0) {
+
+            if (time_diff > 1) {
+                //差值很大
+                av_usleep((2 * frame_real_delay) * 1000000.0);
+            } else {
+                av_usleep((frame_real_delay + time_diff) * 1000000.0);
+            }
+
+
+        } else if (time_diff < 0) {
+            //音频追赶 丢弃当前视频包
+            if (fabs(time_diff) < 0.05) {
+                //丢包
+                aVFrames.dumpQueue();
+                av_frame_unref(avFrame);
+                av_frame_free(&avFrame);
+                avFrame = nullptr;
+                continue;
+            }
+
+        } else {
+            //百分百同步
+            av_usleep(frame_real_delay * 1000000);
+        }
+
         //数组传递会降级为第0个位置的指针
         renderingCallBack(pointers[0], avCodecContext->width, avCodecContext->height, linesizes[0]);
         //释放
@@ -128,6 +173,16 @@ void VideoChannel::setRenderCallback(RenderingCallBack renderCallback) {
 void VideoChannel::stop() {
 
 
+    //等待线程结束
+    pthread_join(p_thread_decode, nullptr);
+    pthread_join(p_thread_play, nullptr);
+    is_play = false;
+    //停止工作
+    aVPackets.setPlayState(false);
+    aVFrames.setPlayState(false);
+    //清除队列
+    aVPackets.clear();
+    aVFrames.clear();
 }
 
 
@@ -154,6 +209,9 @@ void *task_play(void *args) {
 }
 
 VideoChannel::~VideoChannel() {
+    //删除引用
+    delete audio_Channel;
+    audio_Channel = nullptr;
 
 }
 
@@ -188,7 +246,6 @@ void dumpAvFrames(queue<AVFrame *> &queue) {
             pFrame = nullptr;
         }
         queue.pop();//删除
-
     }
 }
 
@@ -218,7 +275,8 @@ void dumpAVPackets(queue<AVPacket *> &queue) {
  * @param fps  帧率
  */
 VideoChannel::VideoChannel(int type_index, AVCodecContext *codecContext, AVRational time_base,
-                           double fps) : BaseChannel(type_index, codecContext, time_base), fps(fps) {
+                           double fps) : BaseChannel(type_index, codecContext, time_base),
+                                         fps(fps) {
 
     aVFrames.setDumpListener(dumpAvFrames);//设置抛弃回调 用于同步
     aVPackets.setDumpListener(dumpAVPackets);//设置抛弃回调 用于同步  其实理论上用不到
@@ -226,7 +284,6 @@ VideoChannel::VideoChannel(int type_index, AVCodecContext *codecContext, AVRatio
 
 void VideoChannel::setJniHelper(JniHelper *helper) {
     this->jniHelper = helper;
-
 }
 
 /**
@@ -234,6 +291,6 @@ void VideoChannel::setJniHelper(JniHelper *helper) {
  * @param audio  audio
  */
 void VideoChannel::putAudio(AudioChannel *audio) {
-    this->audioChannel = audio;
+    this->audio_Channel = audio;
 }
 
