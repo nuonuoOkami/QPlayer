@@ -127,7 +127,7 @@ Java_com_nuonuo_qplayer_QPlayer_startNative(JNIEnv *env, jobject thiz, jlong nat
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_nuonuo_qplayer_QPlayer_stopNative(JNIEnv *env, jobject thiz, jlong native_obj) {
-    // TODO: implement stopNative()
+
 }
 
 /**

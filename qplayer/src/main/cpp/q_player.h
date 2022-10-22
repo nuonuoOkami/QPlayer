@@ -64,7 +64,7 @@ public:
 
     void setRenderCallback(RenderingCallBack renderingCallBack);
 
-    int getDuration();
+    int64_t getDuration();
 
     void seek(int play_value);
 

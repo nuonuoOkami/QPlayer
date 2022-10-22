@@ -53,7 +53,7 @@ void QPlayer::start_prepare() {
     //查看信息流 大于0 ok  其他就失败了
     result = avformat_find_stream_info(avFormatContext, nullptr);
 
-    if (result < 0) { //异常 todo 暂时不处理
+    if (result < 0) { //异常
         //释放掉上下文
         if (jniHelper) {
             jniHelper->onError(THREAD_CHILD, FFMPEG_CAN_NOT_OPEN_URL, av_err2str(result));
@@ -153,7 +153,10 @@ void QPlayer::start_prepare() {
         } else if (parameters->codec_type == AVMEDIA_TYPE_AUDIO) {
             audio_channel = new AudioChannel(index, avCodecContext, time_base);
             if (duration != 0) {//直播不会有时长
-                video_channel->setJniHelper(jniHelper);
+                if (video_channel) {
+                    video_channel->setJniHelper(jniHelper);
+                }
+
             }
         }
 
@@ -238,7 +241,9 @@ void QPlayer::start_play() {
 
         } else if (result == AVERROR_EOF) {//读到末尾
             //包都解析完了停止
-            if (video_channel->aVPackets.empty() && audio_channel->aVPackets.empty()) {
+
+            if (video_channel && video_channel->aVPackets.empty() && audio_channel &&
+                audio_channel->aVPackets.empty()) {
                 break;
             }
         } else {
@@ -248,8 +253,14 @@ void QPlayer::start_play() {
     }
     //停止播放
     is_play = false;
-    audio_channel->stop();
-    video_channel->stop();
+    if (audio_channel) {
+        audio_channel->stop();
+    }
+    if (video_channel) {
+        video_channel->stop();
+    }
+
+
 }
 
 /**
@@ -299,15 +310,42 @@ void QPlayer::seek(int progress) {
     }
     //锁
     pthread_mutex_lock(&p_thread_seek_mutex);
-    //todo seek 代码
 
+    //  AVSEEK_FLAG_FRAME -->https://blog.csdn.net/weiyuefei/article/details/51719735
+//https://zhuanlan.zhihu.com/p/331503824
+//截取视频  花屏幕 使用 AVSEEK_FLAG_BACKWARD | AVSEEK_FLAG_FRAME
+    int result = av_seek_frame(avFormatContext, -1, progress * TIMER_ABSTIME, AVSEEK_FLAG_FRAME);
+    if (result < 0) {//>= 0 on success
+        jniHelper->onError(THREAD_CHILD, FFMPEG_CAN_NOT_OPEN_URL, av_err2str(result));
+        return;
+    }
+    //seek的时候 停止播放 清掉所有队列 然后继续开始
+    if (audio_channel) {
+        audio_channel->aVPackets.setPlayState(false);
+        audio_channel->aVFrames.setPlayState(false);
+        audio_channel->aVPackets.clear();
+        audio_channel->aVFrames.clear();
+        audio_channel->aVPackets.setPlayState(true);
+        audio_channel->aVFrames.setPlayState(true);
+    }
+    if (video_channel) {
+        video_channel->aVPackets.setPlayState(false);
+        video_channel->aVFrames.setPlayState(false);
+        video_channel->aVPackets.clear();
+        video_channel->aVFrames.clear();
+        video_channel->aVPackets.setPlayState(true);
+        video_channel->aVFrames.setPlayState(true);
+    }
+
+    //解锁
+    pthread_mutex_unlock(&p_thread_seek_mutex);
 }
 
 /**
  * 返回时长
  * @return
  */
-int QPlayer::getDuration() {
+int64_t QPlayer::getDuration() {
     return duration;
 
 }
@@ -332,6 +370,5 @@ void QPlayer::start_stop(QPlayer *player) {
     delete video_channel;
     video_channel = nullptr;
     delete player;
-    player = nullptr;
 
 }
