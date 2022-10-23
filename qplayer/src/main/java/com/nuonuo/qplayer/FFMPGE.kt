@@ -30,6 +30,6 @@ object FFMPGE {
     // 没有音视频
     // #define FFMPEG_NOMEDIA 8
     const val FFMPEG_NOMEDIA = 8
-    /* TODO 第二节课新增 --- end */
+
 
 }

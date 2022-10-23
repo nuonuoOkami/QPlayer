@@ -29,7 +29,6 @@ void QPlayer::prepare() {
  * 子线程执行加载任务
  */
 void QPlayer::start_prepare() {
-    LOGE("start_prepare")
     //初始化上下文 ，老少爷们全靠你了
     avFormatContext = avformat_alloc_context();
     //字典  可以理解为一个设置的map
@@ -324,16 +323,14 @@ void QPlayer::seek(int progress) {
 
     //锁
     pthread_mutex_lock(&p_thread_seek_mutex);
-    LOGE("seek lock%d", progress)
     //  AVSEEK_FLAG_FRAME -->https://blog.csdn.net/weiyuefei/article/details/51719735
 //https://zhuanlan.zhihu.com/p/331503824
 //截取视频  花屏幕 使用 AVSEEK_FLAG_BACKWARD | AVSEEK_FLAG_FRAME
 
-   //这里的一个错误  TIMER_ABSTIME   和 AV_TIME_BASE  前者说的是 使用绝对时间。 坑啊
-   //https://blog.csdn.net/luotuo44/article/details/39374759
+    //这里的一个错误  TIMER_ABSTIME   和 AV_TIME_BASE  前者说的是 使用绝对时间。 坑啊
+    //https://blog.csdn.net/luotuo44/article/details/39374759
     int result = av_seek_frame(avFormatContext, -1, progress * AV_TIME_BASE, AVSEEK_FLAG_FRAME);
     if (result < 0) {//>= 0 on success
-        LOGE("seek ERROR")
         jniHelper->onError(THREAD_MAIN, FFMPEG_CAN_NOT_OPEN_URL, av_err2str(result));
         return;
     }
@@ -357,7 +354,6 @@ void QPlayer::seek(int progress) {
 
     //解锁
     pthread_mutex_unlock(&p_thread_seek_mutex);
-    LOGE("seek unlock ")
 }
 
 /**

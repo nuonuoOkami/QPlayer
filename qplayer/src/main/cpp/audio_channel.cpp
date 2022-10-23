@@ -119,7 +119,7 @@ void AudioChannel::audio_play() {
         LOGD("创建引擎接口 create error")
         return;
     }
-    //todo 混音器其实不用可以不创建 当学习了
+    //混音器 不加没动静 奶奶的
     result = (*engineInterface)->CreateOutputMix(engineInterface, &outputMixObject, 0, nullptr,
                                                  nullptr);
     if (result != SL_RESULT_SUCCESS) {
