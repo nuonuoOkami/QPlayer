@@ -19,7 +19,7 @@ template<typename T>//函数泛型
 class SafeQueue {
 private:
     typedef void (*ReleaseListener)(T *); // 函数指针定义 回调 用来释放T里面的内容的;
-    typedef void (*DumpListener)(queue<T>&); // 函数指针定义 回调 用来释放T里面的内容的;
+    typedef void (*DumpListener)(queue<T> &); // 函数指针定义 回调 用来释放T里面的内容的;
 private:
     ReleaseListener release_listener;
     DumpListener dump_listener;
@@ -43,6 +43,11 @@ public:
     }
 
 public:
+
+    void setReleaseListener(ReleaseListener listener) {
+        this->release_listener = listener;
+    }
+
     void insert(T t) {
         pthread_mutex_lock(&lock);
         if (is_play) {//如果在工作作态
@@ -78,14 +83,6 @@ public:
         return result;
     }
 
-    /**
-     *
-     * @param listener
-     * 设置释放监听器
-     */
-    void setReleaseListener(ReleaseListener listener) {
-        this->dump_listener = listener;
-    }
 
 
     /**
@@ -131,7 +128,7 @@ public:
         pthread_mutex_lock(&lock);
         unsigned int size = queue.size();
 
-        for (int pos = 0; pos < size; pos++) {
+        for (int pos = 0; pos < size; ++pos) {
             T t = queue.front();
             if (release_listener) {
                 release_listener(&t);
@@ -146,7 +143,7 @@ public:
     /**
      * 清理所有数据
      */
- void dumpQueue() {
+    void dumpQueue() {
         pthread_mutex_lock(&lock);
         if (dump_listener) { dump_listener(queue); }
         pthread_mutex_unlock(&lock);
@@ -155,6 +152,12 @@ public:
 //初始化锁和信号
 
 };
+
+/**
+    * 设置此函数指针的回调，让外界去释放
+    * @param releaseCallback
+    */
+
 
 
 #endif

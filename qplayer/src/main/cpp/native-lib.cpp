@@ -127,7 +127,10 @@ Java_com_nuonuo_qplayer_QPlayer_startNative(JNIEnv *env, jobject thiz, jlong nat
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_nuonuo_qplayer_QPlayer_stopNative(JNIEnv *env, jobject thiz, jlong native_obj) {
-
+    auto *player = reinterpret_cast<QPlayer *>(thiz);
+    if (player) {
+        player->stop();
+    }
 }
 
 /**
@@ -136,7 +139,7 @@ Java_com_nuonuo_qplayer_QPlayer_stopNative(JNIEnv *env, jobject thiz, jlong nati
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_nuonuo_qplayer_QPlayer_setSurfaceNative(JNIEnv *env, jobject thiz, jobject surface,
-                                              jlong native_obj) {
+                                                 jlong native_obj) {
     pthread_mutex_lock(&mutex);
 
     // 先释放之前的显示窗口
@@ -148,4 +151,44 @@ Java_com_nuonuo_qplayer_QPlayer_setSurfaceNative(JNIEnv *env, jobject thiz, jobj
     // 创建新的窗口用于视频显示
     window = ANativeWindow_fromSurface(env, surface);
     pthread_mutex_unlock(&mutex);
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_nuonuo_qplayer_QPlayer_seekNative(JNIEnv *env, jobject thiz, jint play_value,jlong native_obj) {
+    auto *player = reinterpret_cast<QPlayer *>(native_obj);
+    if (player) {
+        player->seek(play_value);
+    }
+}
+
+//释放
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_nuonuo_qplayer_QPlayer_releaseNative(JNIEnv *env, jobject thiz, jlong native_obj) {
+    auto *player = reinterpret_cast<QPlayer *>(native_obj);
+    pthread_mutex_lock(&mutex);
+    // 先释放之前的显示窗口
+    if (window) {
+        ANativeWindow_release(window);
+        window = nullptr;
+    }
+
+    pthread_mutex_unlock(&mutex);
+    // 释放工作
+    delete player;
+    player = nullptr;
+    delete vm;
+    vm = nullptr;
+    delete window;
+    window = nullptr;
+}
+extern "C"
+JNIEXPORT jint JNICALL
+Java_com_nuonuo_qplayer_QPlayer_getDurationNative(JNIEnv *env, jobject thiz, jlong native_obj) {
+    auto * player = reinterpret_cast<QPlayer *>(native_obj);
+    if (player) {
+        return player->getDuration();
+    }
+    return 0;
 }

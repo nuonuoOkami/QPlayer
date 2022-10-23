@@ -29,6 +29,7 @@ void QPlayer::prepare() {
  * 子线程执行加载任务
  */
 void QPlayer::start_prepare() {
+    LOGE("start_prepare")
     //初始化上下文 ，老少爷们全靠你了
     avFormatContext = avformat_alloc_context();
     //字典  可以理解为一个设置的map
@@ -84,7 +85,6 @@ void QPlayer::start_prepare() {
             }
             //释放上下文
             avformat_close_input(&avFormatContext);
-
             return;
         }
 
@@ -132,7 +132,6 @@ void QPlayer::start_prepare() {
         //获取时间基  这玩意就是处理转换时间的 得告诉你一秒多少帧啥的
         AVRational time_base = avStream->time_base;
 
-
         //是音频
         if (parameters->codec_type == AVMEDIA_TYPE_VIDEO) {
             // 虽然是视频类型，但是只有一帧封面   stream->attached_pic 封面
@@ -150,16 +149,30 @@ void QPlayer::start_prepare() {
                 video_channel->setJniHelper(jniHelper);
             }
 
+
         } else if (parameters->codec_type == AVMEDIA_TYPE_AUDIO) {
             audio_channel = new AudioChannel(index, avCodecContext, time_base);
             if (duration != 0) {//直播不会有时长
-                if (video_channel) {
-                    video_channel->setJniHelper(jniHelper);
-                }
-
+                audio_channel->setJniHelper(jniHelper);
             }
         }
 
+    }
+
+    if (!audio_channel && !video_channel) {
+        if (jniHelper) {
+            jniHelper->onError(THREAD_CHILD, FFMPEG_NOMEDIA, av_err2str(result));
+        }
+        //关闭
+        if (avFormatContext) {
+            avcodec_free_context(&avCodecContext);
+        }
+        avformat_close_input(&avFormatContext);
+        return;
+    }
+
+    if (jniHelper) {
+        jniHelper->onPrepared(THREAD_CHILD);
     }
 
 
@@ -308,15 +321,20 @@ void QPlayer::seek(int progress) {
     if (!avFormatContext) {
         return;
     }
+
     //锁
     pthread_mutex_lock(&p_thread_seek_mutex);
-
+    LOGE("seek lock%d", progress)
     //  AVSEEK_FLAG_FRAME -->https://blog.csdn.net/weiyuefei/article/details/51719735
 //https://zhuanlan.zhihu.com/p/331503824
 //截取视频  花屏幕 使用 AVSEEK_FLAG_BACKWARD | AVSEEK_FLAG_FRAME
-    int result = av_seek_frame(avFormatContext, -1, progress * TIMER_ABSTIME, AVSEEK_FLAG_FRAME);
+
+   //这里的一个错误  TIMER_ABSTIME   和 AV_TIME_BASE  前者说的是 使用绝对时间。 坑啊
+   //https://blog.csdn.net/luotuo44/article/details/39374759
+    int result = av_seek_frame(avFormatContext, -1, progress * AV_TIME_BASE, AVSEEK_FLAG_FRAME);
     if (result < 0) {//>= 0 on success
-        jniHelper->onError(THREAD_CHILD, FFMPEG_CAN_NOT_OPEN_URL, av_err2str(result));
+        LOGE("seek ERROR")
+        jniHelper->onError(THREAD_MAIN, FFMPEG_CAN_NOT_OPEN_URL, av_err2str(result));
         return;
     }
     //seek的时候 停止播放 清掉所有队列 然后继续开始
@@ -339,6 +357,7 @@ void QPlayer::seek(int progress) {
 
     //解锁
     pthread_mutex_unlock(&p_thread_seek_mutex);
+    LOGE("seek unlock ")
 }
 
 /**

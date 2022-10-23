@@ -102,8 +102,8 @@ void VideoChannel::play() {
         double frame_real_delay = fps_delay + extra_delay;
 
         //视频播放进度   best_effort_timestamp -->//https://blog.csdn.net/H514434485/article/details/77619872
-        double video_play_time = av_q2d(time_base);
-        avFrame->best_effort_timestamp * av_q2d(time_base);
+        // av_q2d(time_base);
+        double video_play_time = avFrame->best_effort_timestamp * av_q2d(time_base);
         //音频播放进度
         double audio_play_time = audio_Channel->audio_time;
 

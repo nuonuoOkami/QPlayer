@@ -9,6 +9,7 @@ extern "C"//ffmpeg 需要extern c
 
 #ifndef QPLAYER_BASECHANNEL_H
 #define QPLAYER_BASECHANNEL_H
+
 #include "jni_helper.h"
 
 
@@ -24,15 +25,32 @@ public:
     SafeQueue<AVFrame *> aVFrames;//从信息源里获取出来的原始压缩数据包
     SafeQueue<AVPacket *> aVPackets;//解析出来的原始包 还需要音频/视频的再次解析
 public:
+    static void releaseAVPacket(AVPacket **p) {
+        if (p) {
+            av_packet_free(p); // 释放队列里面的 T == AVPacket
+            *p = 0;
+        }
+    }
+
+    static void releaseAVFrame(AVFrame **f) {
+        if (f) {
+            av_frame_free(f); // 释放队列里面的 T == AVFrame
+            *f = 0;
+        }
+    }
+
     BaseChannel(int typeIndex, AVCodecContext *avCodecContext, AVRational timeBase)
             : avCodecContext(avCodecContext),
               type_index(typeIndex), time_base(timeBase) {
+        aVFrames.setReleaseListener(releaseAVFrame);
+        aVPackets.setReleaseListener(releaseAVPacket);
     };
 
     virtual ~BaseChannel() {
         aVFrames.clear();
         aVPackets.clear();
     }
+
 };
 
 

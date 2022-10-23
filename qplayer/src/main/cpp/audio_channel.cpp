@@ -20,9 +20,6 @@ AudioChannel::AudioChannel(int type_index, AVCodecContext *codecContext, AVRatio
     out_sample_size = av_get_bytes_per_sample(AV_SAMPLE_FMT_S16);
     //采样率44100
     out_sample_rate = 44100;
-
-
-
     //通道*采样率*采样格式
     out_buffer_size = out_channels * out_sample_rate * out_sample_size;
 
@@ -36,7 +33,7 @@ AudioChannel::AudioChannel(int type_index, AVCodecContext *codecContext, AVRatio
                                     out_sample_rate,
                                     avCodecContext->channel_layout,
                                     avCodecContext->sample_fmt, codecContext->sample_rate, 0,
-                                    0);
+                                    nullptr);
 
 
     //初始化
@@ -95,46 +92,46 @@ void AudioChannel::audio_play() {
 
     //创建引擎  https://www.jianshu.com/p/82da5f87314f
     //上下文，选择项数量，具体的选择项，支持的接口的数量，具体的要支持的接口，是枚举的数组
-    result = slCreateEngine(&engineObject, 0, 0, 0, 0, 0);
+    result = slCreateEngine(&engineObject, 0, nullptr, 0, nullptr, nullptr);
     if (result != SL_RESULT_SUCCESS) {
         //异常了
-        LOGE("创建引擎 slCreateEngine error");
+        LOGE("创建引擎 slCreateEngine error")
         return;
     }
     //引擎初始化 延迟初始化
     result = (*engineObject)->Realize(engineObject, SL_BOOLEAN_FALSE);
     if (result != SL_RESULT_SUCCESS) {
         //异常了
-        LOGE("创建引擎 Realize error");
+        LOGE("创建引擎 Realize error")
         return;
     }
     //取接口
     result = (*engineObject)->GetInterface(engineObject, SL_IID_ENGINE, &engineInterface);
     if (result != SL_RESULT_SUCCESS) {
-        LOGE("创建引擎接口 Realize error");
+        LOGE("创建引擎接口 Realize error")
         return;
     }
     if (engineInterface) {
         //接口成功
-        LOGD("创建引擎接口 create success");
+        LOGD("创建引擎接口 create success")
     } else {
         //接口失败
-        LOGD("创建引擎接口 create error");
+        LOGD("创建引擎接口 create error")
         return;
     }
     //todo 混音器其实不用可以不创建 当学习了
-    result = (*engineInterface)->CreateOutputMix(engineInterface, &outputMixObject, 0, 0,
-                                                 0);
+    result = (*engineInterface)->CreateOutputMix(engineInterface, &outputMixObject, 0, nullptr,
+                                                 nullptr);
     if (result != SL_RESULT_SUCCESS) {
         //异常了
-        LOGD("创建混音器 CreateOutputMix failed");
+        LOGD("创建混音器 CreateOutputMix failed")
         return;
     }
     //混音器初始化
     result = (*outputMixObject)->Realize(outputMixObject, SL_BOOLEAN_FALSE);
     if (result != SL_RESULT_SUCCESS) {
         //异常了
-        LOGD("初始化混音器 (*outputMixObject)->Realize failed");
+        LOGD("初始化混音器 (*outputMixObject)->Realize failed")
         return;
     }
 
@@ -169,7 +166,7 @@ void AudioChannel::audio_play() {
     //音轨
     SLDataLocator_OutputMix slDataLocatorOutputMix = {SL_DATALOCATOR_OUTPUTMIX, outputMixObject};
     // SLDataSink audioSnk = {&slDataLocatorOutputMix, NULL};
-    SLDataSink audioSnk = {&slDataLocatorOutputMix, NULL};
+    SLDataSink audioSnk = {&slDataLocatorOutputMix, nullptr};
 
     // 接口配置
     const SLInterfaceID ids[1] = {SL_IID_BUFFERQUEUE};
@@ -186,13 +183,13 @@ void AudioChannel::audio_play() {
                                                    req);// 参数7：代表我们上面的Buff 需要开放出去
     if (result != SL_RESULT_SUCCESS) {
         //异常了
-        LOGD("创建播放器 CreateAudioPlayer failed!");
+        LOGD("创建播放器 CreateAudioPlayer failed!")
         return;
     }
     result = (*bqPlayerObject)->Realize(bqPlayerObject, SL_BOOLEAN_FALSE);//等待成功
     if (SL_RESULT_SUCCESS != result) {
         //异常
-        LOGD("实例化播放器 CreateAudioPlayer failed!");
+        LOGD("实例化播放器 CreateAudioPlayer failed!")
         return;
     }
 
@@ -200,7 +197,7 @@ void AudioChannel::audio_play() {
     result = (*bqPlayerObject)->GetInterface(bqPlayerObject, SL_IID_PLAY, &bqPlayerPlay);
     if (SL_RESULT_SUCCESS != result) {
         //异常
-        LOGD("获取播放接口 GetInterface SL_IID_PLAY failed!");
+        LOGD("获取播放接口 GetInterface SL_IID_PLAY failed!")
         return;
     }
     //获取播放队列
@@ -208,13 +205,14 @@ void AudioChannel::audio_play() {
 
     if (SL_RESULT_SUCCESS != result) {
         //异常
-        LOGD("获取播放队列 GetInterface SL_IID_BUFFERQUEUE failed!");
+        LOGD("获取播放队列 GetInterface SL_IID_BUFFERQUEUE failed!")
         return;
     }
     //回调接口
     result = (*playBufferQueue)->RegisterCallback(playBufferQueue, playBufferQueueCallBack, this);
     if (SL_RESULT_SUCCESS != result) {
         //异常
+        LOGD("回调接口 playBufferQueue RegisterCallback failed!")
         return;
     }
     //播放器接口设置播放
@@ -244,6 +242,37 @@ void AudioChannel::start() {
  */
 void AudioChannel::stop() {
 
+    pthread_join(p_thread_play, nullptr);
+    pthread_join(p_thread_decode, nullptr);
+    is_play = false;
+    aVFrames.clear();
+    aVPackets.clear();
+    //停止播放 播放器接口设置为null
+    if (bqPlayerPlay) {
+        (*bqPlayerPlay)->SetPlayState(bqPlayerPlay, SL_PLAYSTATE_STOPPED);
+        bqPlayerPlay = nullptr;
+    }
+    //播放器销毁
+    if (bqPlayerObject) {
+
+        (*bqPlayerObject)->Destroy(bqPlayerObject);
+        bqPlayerObject = nullptr;
+        //销毁队列
+        playBufferQueue = nullptr;
+    }
+    //销毁混音器
+    if (outputMixObject) {
+        (*outputMixObject)->Destroy(outputMixObject);
+        outputMixObject = nullptr;
+    }
+    //引擎销毁
+    if (engineObject) {
+        (*engineObject)->Destroy(engineObject);
+        engineObject = nullptr;
+        engineInterface = nullptr;
+    }
+    aVFrames.clear();
+    aVPackets.clear();
 }
 
 /**
@@ -363,8 +392,13 @@ int AudioChannel::getPcm() {
                                               avFrame->nb_samples);
         pcm_size = samples_per_channel * out_channels * out_sample_size; //样本数 *声道*样本字节数
 
-
-        //todo 进度
+        if (avFrame) {
+            audio_time = avFrame->best_effort_timestamp * av_q2d(time_base);
+        }
+        //进度
+        if (this->jniHelper) {
+            jniHelper->onProgress(THREAD_CHILD, audio_time);
+        }
 
         break;
     }
