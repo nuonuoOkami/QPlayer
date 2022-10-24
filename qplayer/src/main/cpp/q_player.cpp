@@ -147,8 +147,9 @@ void QPlayer::start_prepare() {
             if (duration != 0) {
                 video_channel->setJniHelper(jniHelper);
             }
-
-
+            //宽高处理
+            this->frameHeight = avCodecContext->height;
+            this->frameWidth = avCodecContext->width;
         } else if (parameters->codec_type == AVMEDIA_TYPE_AUDIO) {
             audio_channel = new AudioChannel(index, avCodecContext, time_base);
             if (duration != 0) {//直播不会有时长
@@ -362,7 +363,14 @@ void QPlayer::seek(int progress) {
  */
 int64_t QPlayer::getDuration() {
     return duration;
+}
 
+int QPlayer::getFrameWidth() const {
+    return frameWidth;
+}
+
+int QPlayer::getFrameHeight() const {
+    return frameHeight;
 }
 
 

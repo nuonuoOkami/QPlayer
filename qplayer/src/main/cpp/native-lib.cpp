@@ -140,7 +140,8 @@ Java_com_nuonuo_qplayer_QPlayer_setSurfaceNative(JNIEnv *env, jobject thiz, jobj
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_nuonuo_qplayer_QPlayer_seekNative(JNIEnv *env, jobject thiz, jint play_value,jlong native_obj) {
+Java_com_nuonuo_qplayer_QPlayer_seekNative(JNIEnv *env, jobject thiz, jint play_value,
+                                           jlong native_obj) {
     auto *player = reinterpret_cast<QPlayer *>(native_obj);
     if (player) {
         player->seek(play_value);
@@ -171,9 +172,27 @@ Java_com_nuonuo_qplayer_QPlayer_releaseNative(JNIEnv *env, jobject thiz, jlong n
 extern "C"
 JNIEXPORT jint JNICALL
 Java_com_nuonuo_qplayer_QPlayer_getDurationNative(JNIEnv *env, jobject thiz, jlong native_obj) {
-    auto * player = reinterpret_cast<QPlayer *>(native_obj);
+    auto *player = reinterpret_cast<QPlayer *>(native_obj);
     if (player) {
         return player->getDuration();
+    }
+    return 0;
+}
+extern "C"
+JNIEXPORT jint JNICALL
+Java_com_nuonuo_qplayer_QPlayer_getFrameWidthNative(JNIEnv *env, jobject thiz, jlong native_obj) {
+    auto *player = reinterpret_cast<QPlayer *>(native_obj);
+    if (player) {
+        return player->getFrameWidth();
+    }
+    return 0;
+}
+extern "C"
+JNIEXPORT jint JNICALL
+Java_com_nuonuo_qplayer_QPlayer_getFrameHeightNative(JNIEnv *env, jobject thiz, jlong native_obj) {
+    auto *player = reinterpret_cast<QPlayer *>(native_obj);
+    if (player) {
+        return player->getFrameHeight();
     }
     return 0;
 }

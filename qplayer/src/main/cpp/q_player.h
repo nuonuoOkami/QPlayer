@@ -40,6 +40,10 @@ private:
     AudioChannel *audio_channel = 0;
     //总时长
     int64_t duration;
+    //画面宽度
+    int frameWidth;
+    //画面高度
+    int frameHeight;
     //是否播放
     bool is_play;
     RenderingCallBack renderingCallBack;
@@ -65,6 +69,11 @@ public:
     void setRenderCallback(RenderingCallBack renderingCallBack);
 
     int64_t getDuration();
+
+    int getFrameWidth() const;
+
+    int getFrameHeight() const;
+
 
     void seek(int play_value);
 
