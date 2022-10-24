@@ -2,10 +2,17 @@
 
 ![Image text](https://github.com/nuonuoOkami/images/blob/main/qplayer.png.png)
 ### 依赖库
-    ffmpeg+OpenSlES 
+    ffmpeg 4.2.1 
+    OpenSlES 
 
 ### 支持
     本地音视频/rtmp流
+### native占用
+#### 本地mp4
+    ![Image text](https://github.com/nuonuoOkami/images/blob/main/mp4_native.png)
+####  rtmp
+    ![Image text](https://github.com/nuonuoOkami/images/blob/main/rtmp_native.jpg)
+
 ### 依赖使用
     implementation 'io.github.nuonuoOkami:QPlayer:1.1.0'
 
