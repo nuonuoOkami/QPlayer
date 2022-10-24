@@ -12,21 +12,6 @@ extern "C" {
 #include "safe_queue.h"
 #include "q_player.h"
 
-extern "C" JNIEXPORT jstring JNICALL
-Java_com_nuonuo_qplayer_QPlayer__stringFromJNI(
-        JNIEnv *env,
-        jobject /* this */) {
-    std::string hello = "版本号为";
-    hello.append(av_version_info());
-    return env->NewStringUTF(hello.c_str());
-}
-extern "C"
-JNIEXPORT jobject JNICALL
-Java_com_nuonuo_qplayer_QPlayer__player(JNIEnv *env, jobject thiz, jstring path) {
-
-    return thiz;
-}
-
 JavaVM *vm = nullptr;
 ANativeWindow *window = nullptr;
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER; // 静态初始化 锁
@@ -86,8 +71,8 @@ void renderFrame(uint8_t *src_data, int width, int height, int src_linesize) {
  * @param args
  * @return
  */
-jint JNI_OnLoad(JavaVM *vm, void *args) {
-    ::vm = vm;
+jint JNI_OnLoad(JavaVM *vm1, void *args) {
+    ::vm = vm1;
     return JNI_VERSION_1_6;
 }
 
