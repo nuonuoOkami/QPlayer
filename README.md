@@ -11,7 +11,7 @@
 #### 本地mp4
 ![Image text](https://github.com/nuonuoOkami/images/blob/main/mp4_native.png)
 ####  rtmp
-![Image text](https://github.com/nuonuoOkami/images/blob/main/rtmp_native.jpg)
+![Image text](https://github.com/nuonuoOkami/images/blob/main/rtmp.png)
 
 ### 依赖使用
     implementation 'io.github.nuonuoOkami:QPlayer:1.1.0'
