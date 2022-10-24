@@ -14,17 +14,15 @@
 ![Image text](https://github.com/nuonuoOkami/images/blob/main/rtmp.png)
 
 ### 依赖使用
-    implementation 'io.github.nuonuoOkami:QPlayer:1.1.0'
+    implementation 'io.github.nuonuoOkami:QPlayer:1.2.0'
 
 ### 使用方式
     
     //初始化
-    val player = QPlayer()
+    val player = QPlayer(this)
     player.setSurface(binding.surface)
     //设置链接地址 本地或者rmtp
     player.setPath("rtmp://void.75755.com/liverepeater/500106?wsSecret=fbc187bda06c3af2f6bda001d339277d&wsTime=634fbba9")
-    //添加生命周期关联
-     lifecycle.addObserver(player)
     //添加加载监听
     player.setPlayerListener(object : PlayerListenerAdapter() {
 
