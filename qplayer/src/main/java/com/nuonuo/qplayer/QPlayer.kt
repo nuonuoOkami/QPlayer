@@ -77,12 +77,12 @@ class QPlayer : SurfaceHolder.Callback, LifecycleObserver {
     }
 
     //回调预加载
-  private  fun onPrepared() {
+    private fun onPrepared() {
         playerListener?.onPrepared(this)
     }
 
     //回调进度
-  private  fun onProgress(progress: Int) {
+    private fun onProgress(progress: Int) {
         playerListener?.onProgress(progress)
         if (progress >= getDuration()) {
             playerListener?.onPlayEnd()
@@ -106,7 +106,7 @@ class QPlayer : SurfaceHolder.Callback, LifecycleObserver {
     /**
      * 错误处理
      */
-   private fun onError(errorCode: Int, ffmpegError: String) {
+    private fun onError(errorCode: Int, ffmpegError: String) {
         val title = "\nFFmpeg给出的错误如下:\n"
         if (null != playerListener) {
             var msg: String? = null
@@ -142,6 +142,15 @@ class QPlayer : SurfaceHolder.Callback, LifecycleObserver {
     fun seek(playProgress: Int) {
         if (nativeQPlayer != null) {
             seekNative(playProgress, nativeQPlayer!!)
+        }
+    }
+
+    /**
+     * 停止
+     */
+    fun stop() {
+        if (nativeQPlayer != null) {
+            stopNative(nativeQPlayer!!)
         }
     }
 

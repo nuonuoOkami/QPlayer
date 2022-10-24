@@ -2,11 +2,52 @@
 
 ![Image text](https://github.com/nuonuoOkami/images/blob/main/qplayer.png.png)
 ### 依赖库
-ffmpeg+OpenSlES 
-***
+    ffmpeg+OpenSlES 
+
 ### 支持
-本地音视频/rtmp流
-***
+    本地音视频/rtmp流
+### 依赖使用
+    implementation 'io.github.nuonuoOkami:QPlayer:1.1.0'
+
+### 使用方式
+    ```
+    //初始化
+    val player = QPlayer()
+    player.setSurface(binding.surface)
+    //设置链接地址 本地或者rmtp
+    player.setPath("rtmp://void.75755.com/liverepeater/500106?wsSecret=fbc187bda06c3af2f6bda001d339277d&wsTime=634fbba9")
+    //添加生命周期关联
+     lifecycle.addObserver(player)
+    //添加加载监听
+    player.setPlayerListener(object : PlayerListenerAdapter() {
+
+            override fun onPlayEnd() {
+                super.onPlayEnd()
+               //播放结束 rmtp 不会有结束
+            }
+
+            override fun onPlayStart() {
+                super.onPlayStart()
+               //开始播放
+            }
+
+            override fun onPrepared(player: QPlayer) {
+                super.onPrepared(player)
+              // 加载完成可以播放
+                //开始播放
+                player.start()
+
+            }
+        })
+        //初始化
+        player.prepare()
+        
+        //关闭
+     player.stop()
+
+
+    ```
+    
 ### 写在最后
-时光聪聪，沉下心来，很少有哪些东西给自己成就感，学到就分享，让自己快乐！
+    逝者如是夫，不舍昼夜夜
 

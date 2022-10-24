@@ -44,6 +44,9 @@ class MainActivity : AppCompatActivity() {
             }
         })
         player.prepare()
+        //player.stop()
+
+
 
 
         binding.start.setOnClickListener {
