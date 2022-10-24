@@ -17,7 +17,7 @@
     implementation 'io.github.nuonuoOkami:QPlayer:1.1.0'
 
 ### 使用方式
-    ```
+    
     //初始化
     val player = QPlayer()
     player.setSurface(binding.surface)
@@ -52,9 +52,11 @@
         //关闭
      player.stop()
 
-
-    ```
-    
 ### 写在最后
-    逝者如是夫，不舍昼夜夜
+    1.2版本正在编写中,预开发内容
+    * 支持https 
+    * 封装生命周期组件
+    
+    
+    
 
