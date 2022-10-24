@@ -32,4 +32,11 @@ interface PlayerListener {
      * 开始播放
      */
     fun onPlayStart();
+
+    /**
+     * 视频宽高参数
+     * @param frameWidth Int
+     * @param frameHeight Int
+     */
+    fun frameParams(frameWidth: Int, frameHeight: Int)
 }

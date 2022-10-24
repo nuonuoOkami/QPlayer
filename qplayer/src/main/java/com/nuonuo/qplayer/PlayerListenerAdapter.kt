@@ -26,4 +26,9 @@ open class PlayerListenerAdapter : PlayerListener {
 
     override fun onPlayStart() {
     }
+
+    override fun frameParams(frameWidth: Int, frameHeight: Int) {
+
+    }
+
 }
