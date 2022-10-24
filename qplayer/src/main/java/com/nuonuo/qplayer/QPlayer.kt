@@ -201,14 +201,14 @@ class QPlayer(val context: Context) : SurfaceHolder.Callback, LifecycleObserver 
         if (null != playerListener) {
             var msg: String? = null
             when (errorCode) {
-                FFMPGE.FFMPEG_CAN_NOT_OPEN_URL -> msg = "打不开视频$title$ffmpegError"
-                FFMPGE.FFMPEG_CAN_NOT_FIND_STREAMS -> msg = "找不到流媒体$title$ffmpegError"
-                FFMPGE.FFMPEG_FIND_DECODER_FAIL -> msg = "找不到解码器$title$ffmpegError"
-                FFMPGE.FFMPEG_ALLOC_CODEC_CONTEXT_FAIL -> msg = "无法根据解码器创建上下文$title$ffmpegError"
-                FFMPGE.FFMPEG_CODEC_CONTEXT_PARAMETERS_FAIL -> msg =
+                FFMPEG.FFMPEG_CAN_NOT_OPEN_URL -> msg = "打不开视频$title$ffmpegError"
+                FFMPEG.FFMPEG_CAN_NOT_FIND_STREAMS -> msg = "找不到流媒体$title$ffmpegError"
+                FFMPEG.FFMPEG_FIND_DECODER_FAIL -> msg = "找不到解码器$title$ffmpegError"
+                FFMPEG.FFMPEG_ALLOC_CODEC_CONTEXT_FAIL -> msg = "无法根据解码器创建上下文$title$ffmpegError"
+                FFMPEG.FFMPEG_CODEC_CONTEXT_PARAMETERS_FAIL -> msg =
                     "根据流信息 配置上下文参数失败$title$ffmpegError"
-                FFMPGE.FFMPEG_OPEN_DECODER_FAIL -> msg = "打开解码器失败$title$ffmpegError"
-                FFMPGE.FFMPEG_NOMEDIA -> msg = "没有音视频$title$ffmpegError"
+                FFMPEG.FFMPEG_OPEN_DECODER_FAIL -> msg = "打开解码器失败$title$ffmpegError"
+                FFMPEG.FFMPEG_NOMEDIA -> msg = "没有音视频$title$ffmpegError"
             }
             playerListener?.onError(msg)
         }

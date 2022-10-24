@@ -1,6 +1,6 @@
 package com.nuonuo.qplayer
 
-object FFMPGE {
+object FFMPEG {
 
 
     // 打不开视频
