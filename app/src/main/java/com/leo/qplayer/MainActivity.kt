@@ -22,7 +22,8 @@ class MainActivity : AppCompatActivity() {
         //player.setSurface(null)
         //player.setPath("rtmp://media3.scctv.net/live/scctv_800")
         //player.setPath(File(filesDir, "1.mp4").absolutePath)
-        player.setPath("rtmp://void.75755.com/liverepeater/500106?wsSecret=fbc187bda06c3af2f6bda001d339277d&wsTime=634fbba9")
+       // player.setPath("rtmp://void.75755.com/liverepeater/500106?wsSecret=fbc187bda06c3af2f6bda001d339277d&wsTime=634fbba9")
+        player.setPath("https://stream7.iqilu.com/10339/upload_transcode/202002/18/20200218025702PSiVKDB5ap.mp4")
         lifecycle.addObserver(player)
         player.setPlayerListener(object : PlayerListenerAdapter() {
 
