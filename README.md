@@ -3,7 +3,7 @@
 ![Image text](https://github.com/nuonuoOkami/images/blob/main/qplayer.png.png)
 ### 依赖库
     ffmpeg 4.2.1 
-    OpenSlES 
+    OpenSLES 
 
 ### 支持
     本地音视频/rtmp流
