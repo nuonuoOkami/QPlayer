@@ -1,23 +1,32 @@
 # QPlayer
 
 ![Image text](https://github.com/nuonuoOkami/images/blob/main/qplayer.png.png)
+
 ### 依赖库
+
     ffmpeg 4.2.1 
     OpenSLES 
 
 ### 支持
+
     本地音视频/rtmp流
+
 ### native占用
+
 #### 本地mp4
+
 ![Image text](https://github.com/nuonuoOkami/images/blob/main/mp4_native.png)
-####  rtmp
+
+#### rtmp
+
 ![Image text](https://github.com/nuonuoOkami/images/blob/main/rtmp.png)
 
 ### 依赖使用
+
     implementation 'io.github.nuonuoOkami:QPlayer:1.2.0'
 
 ### 使用方式
-    
+
     //初始化
     val player = QPlayer(this)
     player.setSurface(binding.surface)
@@ -49,15 +58,33 @@
         
         //关闭
      player.stop()
+
+### 异常处理
+
+    提示 java.lang.UnsatisfiedLinkError: dalvik.system.PathClassLoader... couldn't find "libqplayer.so"
+    暂时未编译提交arm64-v8a
+    app下build.gradle 
+    defaultConfig{
+    xxx...
+    ndk{
+    abiFilters("armeabi-v7a")  // 指定编译平台
+    }
+    }
+
 ### Change Log
+
 #### 1.1
+
      修复依赖库问题 
      支持本地文件播放
+
 #### 1.2
+
      支持自动生命周期管理
      自适应适配宽高
 
 ### 联系我
+
     QQ:1085214089
     
     
